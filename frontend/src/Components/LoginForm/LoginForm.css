@@ -1,0 +1,21 @@
+.icon {
+  height: 1.5rem;
+  width: 1.5rem;
+  padding: 4px;
+  position: absolute;
+  box-sizing: border-box;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+}
+
+.input {
+  height: 100px;
+  box-sizing: border-box;
+  padding-left: 1.5rem;
+}
+
+.wrapper {
+  position: relative;
+  margin-bottom: 10px;
+}
