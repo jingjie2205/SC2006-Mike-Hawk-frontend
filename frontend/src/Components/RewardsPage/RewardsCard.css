@@ -1,0 +1,9 @@
+.text-container {
+  font-size: 25px;
+  font-family: "Poppins", sans-serif;
+}
+
+.rewards-card:hover {
+  background-color: lightgray;
+  border: 2px solid black;
+}

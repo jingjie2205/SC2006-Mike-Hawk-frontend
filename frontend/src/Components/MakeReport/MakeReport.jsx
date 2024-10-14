@@ -31,7 +31,6 @@ function MakeReport() {
           w="1000px"
           resize="vertical"
           isInvalid={validity}
-          value={description}
           onChange={setDescription}
         />
         <Box position="relative" paddingTop={5} paddingBottom={5}>
