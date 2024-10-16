@@ -19,7 +19,7 @@ function RewardsPage() {
   return (
     <div>
       <NavBar />
-      <Box
+      {/* <Box
         display="flex"
         alignItems={"center"}
         paddingTop={"50px"}
@@ -29,7 +29,7 @@ function RewardsPage() {
         bg="teal.500"
       >
         <Text>Rewards</Text>
-      </Box>
+      </Box> */}
       <Box
         borderWidth="2px"
         borderRadius="lg"

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import {
   Box,
   Card,
@@ -14,13 +14,47 @@ import {
   useDisclosure,
   Button,
   useToast,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  FocusLock,
+  PopoverArrow,
+  PopoverCloseButton,
+  Stack,
+  FormControl,
+  FormLabel,
+  Input,
 } from "@chakra-ui/react";
+import { BsThreeDotsVertical } from "react-icons/bs"; // Assuming you're using react-icons for the dots
 import "./RewardsCard.css";
 
-function RewardsCard({ image, name, points, amount, userPoints }) {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+function RewardsCard({
+  image,
+  name,
+  points,
+  amount,
+  userPoints,
+  isAdmin,
+  onUpdate,
+}) {
+  const {
+    isOpen: isRedemptionOpen,
+    onOpen: onRedemptionOpen,
+    onClose: onRedemptionClose,
+  } = useDisclosure();
+  const {
+    isOpen: isEditOpen,
+    onOpen: onEditOpen,
+    onClose: onEditClose,
+  } = useDisclosure();
   const cancelRef = useRef();
   const toast = useToast();
+
+  const [editedVoucher, setEditedVoucher] = useState({
+    name: name,
+    points: points,
+    amount: amount,
+  });
 
   const handleRedemption = () => {
     if (userPoints >= points) {
@@ -31,7 +65,7 @@ function RewardsCard({ image, name, points, amount, userPoints }) {
         duration: 5000,
         isClosable: true,
       });
-      onClose();
+      onRedemptionClose();
     } else {
       toast({
         title: "Insufficient Points",
@@ -40,18 +74,28 @@ function RewardsCard({ image, name, points, amount, userPoints }) {
         duration: 5000,
         isClosable: true,
       });
-      onClose();
+      onRedemptionClose();
     }
+  };
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditedVoucher((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleUpdate = () => {
+    onUpdate(editedVoucher);
+    onEditClose();
   };
 
   return (
     <>
       <Card
-        as="button"
+        as={!isAdmin ? "button" : undefined}
         width={"500px"}
         height={"200px"}
         className="rewards-card"
-        onClick={onOpen}
+        onClick={!isAdmin ? onRedemptionOpen : undefined}
       >
         <CardBody
           width={"500px"}
@@ -75,12 +119,67 @@ function RewardsCard({ image, name, points, amount, userPoints }) {
             <Text>${amount} evoucher</Text>
             <Text>{points} points</Text>
           </Box>
+          {isAdmin && (
+            <Popover
+              isOpen={isEditOpen}
+              onOpen={onEditOpen}
+              onClose={onEditClose}
+              placement="right"
+            >
+              <PopoverTrigger>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  rightIcon={<BsThreeDotsVertical />}
+                  onClick={(e) => e.stopPropagation()} // Prevent card click from triggering
+                />
+              </PopoverTrigger>
+              <PopoverContent p={4}>
+                <FocusLock>
+                  <PopoverArrow />
+                  <PopoverCloseButton />
+                  <Stack spacing={4}>
+                    <FormControl>
+                      <FormLabel>Voucher Name</FormLabel>
+                      <Input
+                        name="name"
+                        value={editedVoucher.name}
+                        onChange={handleEditChange}
+                      />
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel>Description</FormLabel>
+                      <Input
+                        name="amount"
+                        type="number"
+                        value={editedVoucher.amount}
+                        onChange={handleEditChange}
+                      />
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel>Points Required</FormLabel>
+                      <Input
+                        name="points"
+                        type="number"
+                        value={editedVoucher.points}
+                        onChange={handleEditChange}
+                      />
+                    </FormControl>
+                    <Button colorScheme="teal" onClick={handleUpdate}>
+                      Update
+                    </Button>
+                  </Stack>
+                </FocusLock>
+              </PopoverContent>
+            </Popover>
+          )}
         </CardBody>
       </Card>
+
       <AlertDialog
-        isOpen={isOpen}
+        isOpen={isRedemptionOpen}
         leastDestructiveRef={cancelRef}
-        onClose={onClose}
+        onClose={onRedemptionClose}
       >
         <AlertDialogOverlay>
           <AlertDialogContent>
@@ -93,7 +192,7 @@ function RewardsCard({ image, name, points, amount, userPoints }) {
             </AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={onClose}>
+              <Button ref={cancelRef} onClick={onRedemptionClose}>
                 No
               </Button>
               <Button colorScheme="red" onClick={handleRedemption} ml={3}>

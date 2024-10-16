@@ -7,6 +7,7 @@ import {
   HStack,
   Spacer,
   Image,
+  Divider,
 } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
@@ -84,6 +85,15 @@ function NavBar() {
               color={"white"}
             >
               My Reports
+            </Link>
+            <Divider orientation="vertical" />
+            <Link
+              as={RouterLink}
+              to="/adminmanagement"
+              _hover={{ color: "blue.600" }}
+              color={"white"}
+            >
+              Admin Management
             </Link>
           </HStack>
         </HStack>

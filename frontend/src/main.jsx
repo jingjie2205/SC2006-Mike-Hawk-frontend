@@ -10,6 +10,7 @@ import ProfilePage from "./Components/ProfilePage/ProfilePage.jsx";
 import RewardsPage from "./Components/RewardsPage/RewardsPage.jsx";
 import UserMyReport from "./Components/UserMyReport/UserMyReport.jsx";
 import UserDashboard from "./Components/UserDashboard/UserDashboard.jsx";
+import AdminManagementPage from "./Components/AdminManagementPage/AdminManagementPage.jsx";
 
 const router = createBrowserRouter([
   { path: "/login", element: <App /> },
@@ -19,6 +20,7 @@ const router = createBrowserRouter([
   { path: "/rewards", element: <RewardsPage /> },
   { path: "/myreports", element: <UserMyReport /> },
   { path: "/userdashboard", element: <UserDashboard /> },
+  { path: "/adminmanagement", element: <AdminManagementPage /> },
 ]);
 
 createRoot(document.getElementById("root")).render(
