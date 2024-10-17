@@ -5,7 +5,6 @@ import {
   TileLayer,
   useMapEvents,
   Marker,
-  Popup,
   useMap,
 } from "react-leaflet";
 import { Button } from "@chakra-ui/react";
@@ -30,49 +29,57 @@ function SetViewOnLocation({ location }) {
   return null;
 }
 
-function LeafletgeoSearch() {
-  const map = useMap();
-  useEffect(() => {
-    const provider = new OpenStreetMapProvider();
-
-    const searchControl = new GeoSearchControl({
-      provider,
-      marker: {
-        customIcon,
-      },
-    });
-
-    map.addControl(searchControl);
-
-    return () => map.removeControl(searchControl);
-  }, []);
-
-  return null;
-}
-
 function LocationPicker() {
   const [position, setPosition] = useState([1.28967, 103.85007]); // Initial position (Singapore)
+
+  const LeafletgeoSearch = () => {
+    const map = useMap();
+    useEffect(() => {
+      const provider = new OpenStreetMapProvider();
+
+      const searchControl = new GeoSearchControl({
+        provider,
+        marker: {
+          customIcon,
+        },
+      });
+
+      map.addControl(searchControl);
+
+      // Listen for the marker event to update position
+      map.on("geosearch/showlocation", (e) => {
+        setPosition([e.location.y, e.location.x]); // Update position with the selected location's coordinates
+        console.log([e.location.y, e.location.x]); // Log the new position
+      });
+
+      return () => {
+        map.removeControl(searchControl);
+        map.off("geosearch/showlocation"); // Clean up event listener
+      };
+    }, [map]);
+
+    return null;
+  };
 
   // click to place marker
   function LocationMarker() {
     useMapEvents({
       click(e) {
         setPosition([e.latlng.lat, e.latlng.lng]);
+        console.log([e.latlng.lat, e.latlng.lng]); // Log the new position
       },
     });
 
-    return position === null ? null : (
-      <Marker position={position} icon={customIcon}></Marker>
-    );
+    return <Marker position={position} icon={customIcon}></Marker>;
   }
 
+  // get user location
   const handleGetLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setPosition([latitude, longitude]);
-          map.setView(location, 13);
+        (pos) => {
+          setPosition([pos.coords.latitude, pos.coords.longitude]);
+          console.log([pos.coords.latitude, pos.coords.longitude]); // Log the user's position
         },
         (error) => {
           console.error("Error getting location: ", error);

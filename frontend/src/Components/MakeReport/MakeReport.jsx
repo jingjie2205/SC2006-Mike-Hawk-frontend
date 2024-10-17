@@ -16,13 +16,18 @@ function MakeReport() {
   return (
     <div>
       <NavBar />
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          height: "100vh",
-        }}
+      <Box
+        borderWidth="1px"
+        borderRadius="lg"
+        boxShadow="sm"
+        p="4"
+        maxW="1100px"
+        mx="auto"
+        mt="20px"
+        bg="white"
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
       >
         <ImageUpload />
         <Textarea
@@ -40,7 +45,7 @@ function MakeReport() {
         <Button colorScheme="blue" borderRadius={20} mt={4}>
           Submit
         </Button>
-      </div>
+      </Box>
     </div>
   );
 }
