@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Text,
@@ -24,7 +24,31 @@ function AdminManageUser() {
     { id: 1, username: "Aaron" },
     { id: 2, username: "Allen" },
     { id: 3, username: "David" },
+    { id: 4, username: "Anna" },
+    { id: 5, username: "Amanda" }
   ]);
+  
+  const [searchTerm, setSearchTerm] = useState(""); // State for search term
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm); // State for debounced search term
+
+  // Function to handle search input changes
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  // useEffect to handle debouncing - updates the debounced term after 2 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 900); // 2-second delay
+
+    return () => clearTimeout(timer); // Clean up timeout if user types again before 2 seconds
+  }, [searchTerm]); // Runs whenever searchTerm changes
+
+  // Filter users based on the search term (case insensitive)
+  const filteredUsers = users.filter((user) =>
+    user.username.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+  );
 
   return (
     <div>
@@ -50,6 +74,8 @@ function AdminManageUser() {
           backgroundColor="#D3D3D3"
           border-color="black"
           mr="3%"
+          value={searchTerm}
+          onChange={handleSearchChange}
         />
       </HStack>
 
@@ -67,12 +93,20 @@ function AdminManageUser() {
 
       <TableContainer>
         <Table variant="simple">
-          {users.map((user) => (
-            <Tr key={user.id}>
-              <Td>{user.id}</Td>
-              <Td>{user.username}</Td>
-            </Tr>
-          ))}
+        <Tbody>
+            {filteredUsers.length > 0 ? (
+              filteredUsers.map((user) => (
+                <Tr key={user.id}>
+                  <Td>{user.id}</Td>
+                  <Td>{user.username}</Td>
+                </Tr>
+              ))
+            ) : (
+              <Tr>
+                <Td colSpan="2">No users found</Td>
+              </Tr>
+            )}
+          </Tbody>
         </Table>
       </TableContainer>
     </div>
