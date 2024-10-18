@@ -18,9 +18,7 @@ function RewardsPage() {
     <div>
       <NavBar />
       <Box
-        borderWidth="1px"
         borderRadius="lg"
-        boxShadow="sm"
         p="4"
         maxW="1100px"
         mx="auto"
@@ -47,10 +45,12 @@ function RewardsPage() {
         </Box>
         {/* VOUCHERS */}
         <Box
+          
           display={"flex"}
           flexDir={"column"}
           alignItems={"center"}
           paddingTop={"20px"}
+          ml={"10%"}
         >
           {/* HARD CODED VALUE FOR TESTING */}
           {vouchers.map((reward, index) => (
