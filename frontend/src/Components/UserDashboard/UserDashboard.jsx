@@ -8,12 +8,13 @@ function UserDashboard() {
   return (
     <div>
       <NavBar />
-      <h1>User Dashboard</h1>
-      <VStack
+
+      <VStack 
         bg="#06ADBF"
         align="center"
+        mt="3%"
       >
-        <Text fontWeight="1000" fontSize="200%" align="center" color="white" mb="0px">Welcome John</Text>
+        <Text fontWeight="1000" mt="3%" fontSize="200%" align="center" color="white" mb="0px">Welcome John</Text>
         <HStack alignItems="center" mt="0px">
           <IconButton
             aria-label="Search"
