@@ -2,6 +2,8 @@ import React from "react";
 import { FaUser, FaLock } from "react-icons/fa";
 import "./LoginForm.css";
 import { Link as RouterLink } from "react-router-dom";
+import { useQuery } from "react-query";
+import axios from "axios";
 
 import {
   Box,
@@ -14,7 +16,31 @@ import {
   border,
 } from "@chakra-ui/react";
 
+const retrievePosts = async () => {
+  const response = await axios.get("http://127.0.0.1:8000/public/public/login");
+  return response.data;
+};
+
 function LoginForm() {
+  const handleSubmit = async (e) => {
+    // e.preventDefault();
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/public/public/login",
+        {
+          username: "jinjie1",
+          password: "password1",
+        }
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    handleSubmit();
+  }, []);
+
   return (
     <div>
       <Box

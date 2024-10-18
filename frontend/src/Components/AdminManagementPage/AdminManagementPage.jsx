@@ -11,6 +11,7 @@ import {
 import NavBar from "../../Common/NavBar";
 import RewardsCard from "../RewardsPage/RewardsCard";
 import AdminManageRewards from "./AdminManageRewards";
+import AdminManageUser from "./AdminManageUser";
 
 function AdminManagementPage() {
   return (
@@ -33,7 +34,7 @@ function AdminManagementPage() {
 
           <TabPanels>
             <TabPanel>
-              <p>Manage Users</p>
+              <AdminManageUser />
             </TabPanel>
             <TabPanel>
               <AdminManageRewards />
