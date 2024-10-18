@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { FaSearch } from "react-icons/fa";
 
-// Sample report data 
+// Sample report data
 const reports = [
   {
     id: 1,
@@ -131,7 +131,7 @@ function UserMyReport() {
         Past Reports
       </Text>
       <VStack bg="white" align="center">
-      {reports
+        {reports
           .filter((report) => !report.isActive)
           .map((report) => (
             <Box
