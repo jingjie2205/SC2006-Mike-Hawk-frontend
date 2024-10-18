@@ -25,7 +25,7 @@ import {
   FormLabel,
   Input,
 } from "@chakra-ui/react";
-import { BsThreeDotsVertical } from "react-icons/bs"; // Assuming you're using react-icons for the dots
+import { BsThreeDotsVertical } from "react-icons/bs";
 import "./RewardsCard.css";
 
 function RewardsCard({
@@ -131,7 +131,7 @@ function RewardsCard({
                   variant="ghost"
                   size="sm"
                   rightIcon={<BsThreeDotsVertical />}
-                  onClick={(e) => e.stopPropagation()} // Prevent card click from triggering
+                  onClick={(e) => e.stopPropagation()}
                 />
               </PopoverTrigger>
               <PopoverContent p={4}>

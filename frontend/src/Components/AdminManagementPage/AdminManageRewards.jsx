@@ -20,7 +20,7 @@ function AdminManageRewards() {
   const [newVoucher, setNewVoucher] = useState({
     name: "",
     points: "",
-    amount: "", // Hardcoded for now, you can make this a form field too
+    amount: "",
   });
   const { onOpen, onClose, isOpen } = useDisclosure();
 
@@ -46,9 +46,9 @@ function AdminManageRewards() {
 
   const handleSave = () => {
     if (newVoucher.name && newVoucher.points) {
-      setVouchers([...vouchers, newVoucher]); // Add new voucher to list
-      setNewVoucher({ name: "", description: "", points: "", amount: 10 }); // Reset form
-      onClose(); // Close the Popover
+      setVouchers([...vouchers, newVoucher]);
+      setNewVoucher({ name: "", description: "", points: "", amount: 10 });
+      onClose();
     }
   };
 
@@ -132,7 +132,7 @@ function AdminManageRewards() {
             points={reward.points}
             amount={reward.amount}
             isAdmin={true}
-            onUpdate={(updatedVoucher) => updateVoucher(index, updatedVoucher)} // Pass update function
+            onUpdate={(updatedVoucher) => updateVoucher(index, updatedVoucher)}
           />
         ))}
       </div>

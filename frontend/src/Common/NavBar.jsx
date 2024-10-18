@@ -8,9 +8,17 @@ import {
   Spacer,
   Image,
   Divider,
+  Tooltip,
 } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
+import {
+  IoHomeOutline,
+  IoGiftOutline,
+  IoFileTrayFullOutline,
+} from "react-icons/io5"; //user dashboard //rewards //my reports
+import { GoReport } from "react-icons/go"; //make report
+import { MdManageSearch } from "react-icons/md"; //admin manage user/rewards
 
 function NavBar() {
   return (
@@ -24,7 +32,7 @@ function NavBar() {
       py={2} // Adds some padding for vertical spacing
       shadow="md"
     >
-      <Flex h={16} alignItems="center" justifyContent="space-between">
+      <Flex alignItems="center" justifyContent="space-between">
         <HStack spacing={8} alignItems="center">
           <Box>
             <Image
@@ -37,70 +45,39 @@ function NavBar() {
           </Box>
 
           {/* Navigation Links */}
-          <HStack as="nav" spacing={4} display={{ base: "none", md: "flex" }}>
-            <Link
-              as={RouterLink}
-              to="/login"
-              _hover={{ color: "blue.600" }}
-              color={"white"}
-            >
-              Login
-            </Link>
-            <Link
-              as={RouterLink}
-              to="/register"
-              _hover={{ color: "blue.600" }}
-              color={"white"}
-            >
-              Register
-            </Link>
-            <Link
-              as={RouterLink}
-              to="/userdashboard"
-              _hover={{ color: "blue.600" }}
-              color={"white"}
-            >
-              User Dashboard
-            </Link>
-            <Link
-              as={RouterLink}
-              to="/makereport"
-              _hover={{ color: "blue.600" }}
-              color={"white"}
-            >
-              Make Report
-            </Link>
-            <Link
-              as={RouterLink}
-              to="/rewards"
-              _hover={{ color: "blue.600" }}
-              color={"white"}
-            >
-              Rewards
-            </Link>
-            <Link
-              as={RouterLink}
-              to="/myreports"
-              _hover={{ color: "blue.600" }}
-              color={"white"}
-            >
-              My Reports
-            </Link>
-            <Divider orientation="vertical" />
-            <Link
-              as={RouterLink}
-              to="/adminmanagement"
-              _hover={{ color: "blue.600" }}
-              color={"white"}
-            >
-              Admin Management
-            </Link>
+          <HStack as="nav" spacing={6} alignItems="center">
+            <Tooltip label="Dashboard">
+              <Link as={RouterLink} to="/userdashboard">
+                <IoHomeOutline size={30} color="white" />
+              </Link>
+            </Tooltip>
+            <Tooltip label="Make Report">
+              <Link as={RouterLink} to="/makereport">
+                <GoReport size={30} color="white" />
+              </Link>
+            </Tooltip>
+            <Tooltip label="Rewards">
+              <Link as={RouterLink} to="/rewards">
+                <IoGiftOutline size={30} color="white" />
+              </Link>
+            </Tooltip>
+            <Tooltip label="My Reports">
+              <Link as={RouterLink} to="/myreports">
+                <IoFileTrayFullOutline size={30} color="white" />
+              </Link>
+            </Tooltip>
+            <Divider orientation="vertical" color={"whiteAlpha.400"} />
+            <Tooltip label="Manage">
+              <Link as={RouterLink} to="/adminmanagement">
+                <MdManageSearch size={30} color="white" />
+              </Link>
+            </Tooltip>
           </HStack>
         </HStack>
 
         <Spacer />
         <Box>
-          <Link as={RouterLink} to="/profile" _hover={{ color: "blue.600" }}>
+          <Link as={RouterLink} to="/profile">
             <Button bg="transparent" _hover={{ bg: "gray.800" }}>
               <FaUserCircle size={30} color="white" />
             </Button>
