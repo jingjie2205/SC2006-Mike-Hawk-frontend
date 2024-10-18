@@ -11,10 +11,12 @@ function ProfilePage() {
       <Flex
         bg="#06ADBF"
         p={4}
-        align="center">
-        <Text p="2%" fontWeight="1000" fontSize="200%" align="left" color="white">Hello, John!</Text>
+        align="center"
+        width="100vw"
+        >
+        <Text fontWeight="1000" fontSize="100%" align="left" color="white">Hello, John!</Text>
         
-        <Image float='right' margin="15px 0px 15px 65%" boxSize='10%' borderRadius="50%" src='https://bit.ly/dan-abramov' alt='Dan Abramov' />      
+        <Image float='right' align="right" margin="2% 0px 2% 60%" boxSize='10%' borderRadius="50%" src='https://bit.ly/dan-abramov' alt='Dan Abramov' />      
       </Flex>
       <Box>
             <VStack spacing={4}>
@@ -29,7 +31,7 @@ function ProfilePage() {
                 >
                     <Text fontWeight="bold" color="black" mb={2} >Username: John123</Text>
                     <Text fontWeight="bold" color="black" mb={10}>Email: John123@gmail.com</Text>
-                    <Button ml="65%" fontWeight="800" mb={20} background="#06ADBF" color='white' width="30%">
+                    <Button ml="65%" fontWeight="800" background="#06ADBF" color='white' width="30%">
                         Update
                     </Button>
                     

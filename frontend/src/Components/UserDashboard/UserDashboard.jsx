@@ -14,23 +14,23 @@ function UserDashboard() {
         align="center"
       >
         <Text fontWeight="1000" fontSize="200%" align="center" color="white" mb="0px">Welcome John</Text>
-        <Box alignItems="center" mt="0px">
+        <HStack alignItems="center" mt="0px">
           <IconButton
             aria-label="Search"
             icon={<FaSearch />}
-            fontSize='40'
+            fontSize='300%'
             color="white"
             background="#06ADBF"
             p="10" />
-          <Input placeholder="Search Announcements" htmlSize={100} height={50} borderRadius={25} border-color="black" />
+          <Input placeholder="Search Announcements" htmlSize="50%" height={50} borderRadius={25} border-color="black" />
           <IconButton
             aria-label="Filter"
             icon={<HiOutlineAdjustmentsHorizontal />}
-            fontSize='50'
+            fontSize='400%'
             color="white"
             background="#06ADBF"
             p="10" />
-        </Box>
+        </HStack>
       </VStack>
       <VStack
         bg="white"
@@ -40,51 +40,52 @@ function UserDashboard() {
           bg="#dddddd"
           alignItems="center"
           w="100%"
-          margin="3% 0px 3% 0px">
-          <Image p="2%" boxSize='10%' float='left' src="src/FireStation.png" alt="Fire Station" />
-          <Text margin="3% 0px 0px 16%" align="left" fontWeight="1000" fontSize="200%" color="black" >Jurong Fire Station </Text>
-          <Text margin="0% 0px 3% 16%" align="left" fontWeight="1000" fontSize="100%" color="black" >Posted at 10:45 am </Text>
+          margin="3% 0px 3% 0px"
+          padding="3%">
+          <Image mt="1%" mr="3%" boxSize="15%" float='left' src="src/Assets/FireStation.png" alt="Fire Station" />
+          <Text align="left" fontWeight="1000" fontSize="150%" color="black" >Jurong Fire Station </Text>
+          <Text align="left" fontWeight="1000" fontSize="80%" color="black" >Posted at 10:45 am </Text>
         </Box>
 
-        <Text margin="0% 5% 0% 5%" align="left" fontWeight="1000" fontSize="100%" color="black" >We regret to inform our community that the fire alarm system at Jurong Point Mall is currently not functioning due to a technical issue.
+        <Text margin="0% 5% 0% 5%" align="left" fontWeight="1000" fontSize="70%" color="black" >We regret to inform our community that the fire alarm system at Jurong Point Mall is currently not functioning due to a technical issue.
           Our team is working urgently to restore it to full operation. In the meantime, please remain vigilant and report any emergencies directly to 995. Your safety is our top priority, and we will update you as soon as the issue is resolved."</Text>
-        <Image p="2%" boxSize='40%' src="src/FireAlarm.jpg" alt="Fire Alarm" />
-
-        <HStack mt="5px" w="50vw" spacing='25%'>
-          <HStack>
-            <IconButton
-              icon={<FaRegThumbsUp />}
-              aria-label="Like"
-              fontSize='50'
-              color="grey"
-              background="white"
-            />
-            <Text ml="3" fontWeight="bold" color="black">Like</Text>
-          </HStack>
-
-          <HStack >
-            <IconButton
-              icon={<FaCommentDots />}
-              fontSize='50'
-              color="grey"
-              background="white"
-            />
-            <Text ml="3" fontWeight="bold" color="black">Comment</Text>
-          </HStack>
-
-
-          <HStack >
-            <IconButton
-              icon={<FaShare />}
-              aria-label="Share"
-              fontSize='50'
-              color="grey"
-              background="white"
-            />
-            <Text ml="3" fontWeight="bold" color="black">Share</Text>
-          </HStack>
-        </HStack>
+        <Image p="2%" boxSize='60%' src="src/Assets/FireAlarm.jpg" alt="Fire Alarm" />
       </VStack>
+      
+      <HStack mt="1%">
+        <HStack ml="8%"> 
+          <IconButton
+            icon={<FaRegThumbsUp />}
+            aria-label="Like"
+            fontSize='200%'
+            color="grey"
+            background="white"
+          />
+          <Text fontWeight="bold" color="black">Like</Text>
+        </HStack>
+
+        <HStack ml="7%" mr="5%">
+          <IconButton
+            icon={<FaCommentDots />}
+            fontSize='200%'
+            color="grey"
+            background="white"
+          />
+          <Text fontWeight="bold" color="black">Comment</Text>
+        </HStack>
+
+
+        <HStack >
+          <IconButton
+            icon={<FaShare />}
+            aria-label="Share"
+            fontSize='200%'
+            color="grey"
+            background="white"
+          />
+          <Text fontWeight="bold" color="black">Share</Text>
+        </HStack>
+      </HStack>
     </div>
   );
 }
