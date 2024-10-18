@@ -117,9 +117,9 @@ function AdminManageRewards() {
       </Popover>
       <div
         display="flex"
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
+        // flexDirection="column"
+        // alignItems="center"
+        // justifyContent="center"
         gap="20px"
         padding="20px"
       >

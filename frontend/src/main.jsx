@@ -11,6 +11,7 @@ import RewardsPage from "./Components/RewardsPage/RewardsPage.jsx";
 import UserMyReport from "./Components/UserMyReport/UserMyReport.jsx";
 import UserDashboard from "./Components/UserDashboard/UserDashboard.jsx";
 import AdminManagementPage from "./Components/AdminManagementPage/AdminManagementPage.jsx";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 const router = createBrowserRouter([
   { path: "/login", element: <App /> },
@@ -23,10 +24,14 @@ const router = createBrowserRouter([
   { path: "/adminmanagement", element: <AdminManagementPage /> },
 ]);
 
+const queryClient = new QueryClient();
+
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <ChakraProvider>
-      <RouterProvider router={router} />
-    </ChakraProvider>
-  </StrictMode>
+  <QueryClientProvider client={queryClient}>
+    <StrictMode>
+      <ChakraProvider>
+        <RouterProvider router={router} />
+      </ChakraProvider>
+    </StrictMode>
+  </QueryClientProvider>
 );
