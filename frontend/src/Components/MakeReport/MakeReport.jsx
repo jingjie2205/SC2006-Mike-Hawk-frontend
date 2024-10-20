@@ -8,11 +8,26 @@ import "react-clock/dist/Clock.css";
 import DateTimePicker from "react-datetime-picker";
 import { Textarea, Box, Button } from "@chakra-ui/react";
 import NavBar from "../../Common/NavBar";
+import axios from "axios";
 
 function MakeReport() {
   const [dateValue, setDateValue] = useState(new Date());
   const [validity, setValidity] = useState(false);
   const [description, setDescription] = useState("");
+
+  const handleSubmit = async (e) => {
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/reports/report/user/ce4339f1-7598-434a-9e2c-8351eaca5af7"
+      );
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  handleSubmit();
+
   return (
     <div>
       <NavBar />

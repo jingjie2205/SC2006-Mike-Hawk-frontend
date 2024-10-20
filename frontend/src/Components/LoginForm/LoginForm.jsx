@@ -1,4 +1,4 @@
-import React from "react";
+import { React, useState } from "react";
 import { FaUser, FaLock } from "react-icons/fa";
 import "./LoginForm.css";
 import { Link as RouterLink } from "react-router-dom";
@@ -16,30 +16,43 @@ import {
   border,
 } from "@chakra-ui/react";
 
-const retrievePosts = async () => {
+const retrieveLogin = async () => {
   const response = await axios.get("http://127.0.0.1:8000/public/public/login");
   return response.data;
 };
 
 function LoginForm() {
+  // states for login input boxes
+  const [name, setUsername] = useState("");
+  const [pw, setPassword] = useState("");
+
+  {
+    /* update states when input boxes are changed */
+  }
+  const handleUsername = (e) => {
+    setUsername(e.target.value);
+  };
+
+  const handlePassword = (e) => {
+    setPassword(e.target.value);
+  };
+
   const handleSubmit = async (e) => {
-    // e.preventDefault();
     try {
       const response = await axios.post(
         "http://127.0.0.1:8000/public/public/login",
         {
-          username: "jinjie1",
-          password: "password1",
+          username: name,
+          password: pw,
         }
       );
-      console.log(response.data);
+      localStorage.setItem("authToken", response.data.token);
+      // redirect user to dashboard page
+      window.location.href = "/userdashboard";
     } catch (error) {
       console.log(error);
     }
   };
-  useEffect(() => {
-    handleSubmit();
-  }, []);
 
   return (
     <div>
@@ -58,12 +71,22 @@ function LoginForm() {
         <FormControl>
           <FormLabel htmlFor="Username">Username</FormLabel>
           <div class="wrapper">
-            <Input id="username" type="username" rounded={20} />
+            <Input
+              id="username"
+              type="username"
+              rounded={20}
+              onChange={handleUsername}
+            />
             <FaUser class="icon" />
           </div>
           <FormLabel htmlFor="Password">Password</FormLabel>
           <div class="wrapper">
-            <Input id="password" type="password" rounded={20} />
+            <Input
+              id="password"
+              type="password"
+              rounded={20}
+              onChange={handlePassword}
+            />
             <FaLock class="icon" />
           </div>
           <Button
@@ -72,6 +95,7 @@ function LoginForm() {
             variant="solid"
             colorScheme="blue"
             width="full"
+            onClick={handleSubmit}
           >
             Login
           </Button>

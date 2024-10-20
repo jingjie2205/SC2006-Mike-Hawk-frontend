@@ -16,9 +16,10 @@ import {
   IoHomeOutline,
   IoGiftOutline,
   IoFileTrayFullOutline,
-} from "react-icons/io5"; //user dashboard //rewards //my reports
-import { GoReport } from "react-icons/go"; //make report
-import { MdManageSearch } from "react-icons/md"; //admin manage user/rewards
+} from "react-icons/io5";
+import { GoReport } from "react-icons/go";
+import { MdManageSearch } from "react-icons/md";
+import { TbAlertSquare } from "react-icons/tb";
 
 function NavBar() {
   return (
@@ -70,6 +71,11 @@ function NavBar() {
             <Tooltip label="Manage">
               <Link as={RouterLink} to="/adminmanagement">
                 <MdManageSearch size={30} color="white" />
+              </Link>
+            </Tooltip>
+            <Tooltip label="Review">
+              <Link as={RouterLink} to="/dashboard">
+                <TbAlertSquare size={30} color="white" />
               </Link>
             </Tooltip>
           </HStack>
