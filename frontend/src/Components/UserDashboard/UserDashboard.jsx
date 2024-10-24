@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from "react";
 import NavBar from "../../Common/NavBar";
 import {
-  Box,
-  Button,
-  Flex,
-  Avatar,
   Text,
   Input,
   VStack,
   IconButton,
-  Image,
   HStack,
 } from "@chakra-ui/react";
 import { FaSearch } from "react-icons/fa";

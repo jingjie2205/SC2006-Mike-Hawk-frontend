@@ -1,11 +1,19 @@
-import React, { useState, useEffect } from "react";
-import { Box, Text, Image, VStack, HStack, IconButton } from "@chakra-ui/react";
+import React, { useState } from "react";
+import { Box, Text, Image, VStack, HStack, IconButton, Input, Button } from "@chakra-ui/react";
 import { FaRegThumbsUp, FaCommentDots, FaShare } from "react-icons/fa";
 
 // Post component
 function Post({ post }) {
   // Toggle like status for a post
-  const [likeStatus, setLikeStatus] = useState({}); // State for like status
+  const [likeStatus, setLikeStatus] = useState({}); // State for like statusconst 
+  const [comments, setComments] = useState({}); // State for storing comments
+  const [newComment, setNewComment] = useState(""); // State for new comment input
+  const [showCommentInput, setShowCommentInput] = useState({}); // State for showing comment input
+  const [currentUser] = useState({
+    name: "John Doe",
+    photo: 'https://bit.ly/dan-abramov'  // Example user photo URL
+  }); // State to keep track of the current user name and photo
+
 
   const handleLike = (id) => {
     setLikeStatus((prevStatus) => ({
@@ -13,6 +21,33 @@ function Post({ post }) {
       [id]: !prevStatus[id], // Toggle the like status
     }));
   };
+
+  // Handle comment input change
+  const handleCommentChange = (e) => {
+    setNewComment(e.target.value);
+  };
+
+  // Handle comment submit
+  const handleCommentSubmit = (postId) => {
+    if (newComment.trim() === "") return; // Prevent empty comments
+
+    setComments((prevComments) => ({
+      ...prevComments,
+      [postId]: [
+        ...(prevComments[postId] || []),
+        { text: newComment, user: currentUser }, // Add new comment with user data
+      ],
+    }));
+
+    setNewComment(""); // Clear input field after submission
+  };
+  const toggleCommentInput = (postId) => {
+    setShowCommentInput((prevShow) => ({
+      ...prevShow,
+      [postId]: !prevShow[postId], // Toggle visibility of the comment input
+    }));
+  };
+
 
   return (
     <VStack bg="white" key={post.id}>
@@ -44,7 +79,7 @@ function Post({ post }) {
       </Text>
       <Image p="2%" boxSize="60%" src={post.image} alt="Fire Alarm" />
 
-      <HStack align="center" mt="1%" mb="2%">
+      <HStack align="center" mt="1%" mb="2%" width="80%">
         <HStack mr="0%" onClick={() => handleLike(post.id)}>
           <IconButton
             icon={<FaRegThumbsUp />}
@@ -59,7 +94,7 @@ function Post({ post }) {
           </Text>
         </HStack>
 
-        <HStack ml="9%" mr="5%">
+        <HStack ml="10%" mr="8%" width="80%" onClick={() => toggleCommentInput(post.id)}>
           <IconButton
             icon={<FaCommentDots />}
             fontSize="200%"
@@ -84,6 +119,50 @@ function Post({ post }) {
           </Text>
         </HStack>
       </HStack>
+      {/* Comments Section */}
+      <VStack width="80%" align="left">
+        {comments[post.id] &&
+          comments[post.id].map((comment, index) => (
+            <HStack key={index} align="start" mb="3%">
+            <Image
+              boxSize="10%"
+              borderRadius="full"
+              src={comment.user.photo}
+              alt={comment.user.name}
+              mt="1%"
+            />
+            <VStack align="left"> 
+              <Text fontWeight="bold" fontSize="80%" color="black" align="left">
+                {comment.user.name}
+              </Text>
+              <Text fontSize="80%" color="black" align="left">
+                {comment.text}
+              </Text>
+            </VStack>
+          </HStack>
+          ))}
+      </VStack>
+
+      {/* Comment Input */}
+      {showCommentInput[post.id] && (
+        <HStack width="80%" align="center" mt="1%">
+          <Input
+            value={newComment}
+            onChange={handleCommentChange}
+            placeholder="Add a comment..."
+            size="sm"
+            border="1px solid #ddd"
+          />
+          <Button
+            size="sm"
+            colorScheme="blue"
+            onClick={() => handleCommentSubmit(post.id)}
+          >
+            Submit
+          </Button>
+        </HStack>
+      )}
+
     </VStack>
   );
 }
