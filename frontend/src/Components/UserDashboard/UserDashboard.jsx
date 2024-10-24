@@ -6,6 +6,8 @@ import {
   VStack,
   IconButton,
   HStack,
+  InputGroup,
+  InputLeftElement,
 } from "@chakra-ui/react";
 import { FaSearch } from "react-icons/fa";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
@@ -53,10 +55,8 @@ function UserDashboard() {
   useEffect(() => {
     const filtered = postsData.filter(
       (post) =>
-        post.description
-          .toLowerCase()
-          .includes(debouncedTerm.toLowerCase()) ||
-          post.authority.toLowerCase().includes(debouncedTerm.toLowerCase())
+        post.description.toLowerCase().includes(debouncedTerm.toLowerCase()) ||
+        post.authority.toLowerCase().includes(debouncedTerm.toLowerCase())
     );
     setFilteredReports(filtered);
   }, [debouncedTerm]);
@@ -65,7 +65,7 @@ function UserDashboard() {
     <div>
       <NavBar />
 
-      <VStack bg="#06ADBF"  mt="3%">
+      <VStack bg="#06ADBF" mt="3%">
         <Text
           fontWeight="1000"
           mt="3%"
@@ -77,23 +77,23 @@ function UserDashboard() {
           Welcome John
         </Text>
         <HStack alignItems="center" mt="0px">
-          <IconButton
-            aria-label="Search"
-            icon={<FaSearch />}
-            fontSize="300%"
-            color="white"
-            background="#06ADBF"
-            p="10"
-          />
-          <Input
-            placeholder="Search Announcements"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)} // Update search term with user input
-            htmlSize="50%"
-            height={50}
-            borderRadius={25}
-            borderColor="black"
-          />
+          <InputGroup startElement={<FaSearch />}>
+            <InputLeftElement h="full" ml="2%">
+              <FaSearch color="white"  fontSize='1.2em' pointerEvents='none'/>
+            </InputLeftElement>
+            <Input
+              placeholder="Search Announcements"
+              _placeholder={{ color: 'white' }}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)} // Update search term with user input
+              htmlSize="50%"
+              height={50}
+              borderRadius={25}
+              borderColor="white"
+              size="md"
+            />
+          </InputGroup>
+
           <IconButton
             aria-label="Filter"
             icon={<HiOutlineAdjustmentsHorizontal />}

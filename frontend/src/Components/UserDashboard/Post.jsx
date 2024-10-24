@@ -1,27 +1,42 @@
 import React, { useState } from "react";
-import { Box, Text, Image, VStack, HStack, IconButton, Input, Button } from "@chakra-ui/react";
+import {
+  Box,
+  Text,
+  Image,
+  VStack,
+  HStack,
+  IconButton,
+  Input,
+  Button,
+} from "@chakra-ui/react";
 import { FaRegThumbsUp, FaCommentDots, FaShare } from "react-icons/fa";
 
 // Post component
 function Post({ post }) {
   // Toggle like status for a post
-  const [likeStatus, setLikeStatus] = useState({}); // State for like statusconst 
+  const [likeStatus, setLikeStatus] = useState({}); // State for like status
+  const [likeCount, setLikeCount] = useState(post.likeCount || 0); // State for like count
   const [comments, setComments] = useState({}); // State for storing comments
   const [newComment, setNewComment] = useState(""); // State for new comment input
   const [showCommentInput, setShowCommentInput] = useState({}); // State for showing comment input
   const [currentUser] = useState({
     name: "John Doe",
-    photo: 'https://bit.ly/dan-abramov'  // Example user photo URL
+    photo: "https://bit.ly/dan-abramov", // Example user photo URL
   }); // State to keep track of the current user name and photo
-
 
   const handleLike = (id) => {
     setLikeStatus((prevStatus) => ({
       ...prevStatus,
       [id]: !prevStatus[id], // Toggle the like status
     }));
-  };
 
+    // Update like count
+    if (!likeStatus[id]) {
+      setLikeCount((prevCount) => prevCount + 1);
+    } else {
+      setLikeCount((prevCount) => prevCount - 1);
+    }
+  };
   // Handle comment input change
   const handleCommentChange = (e) => {
     setNewComment(e.target.value);
@@ -47,7 +62,6 @@ function Post({ post }) {
       [postId]: !prevShow[postId], // Toggle visibility of the comment input
     }));
   };
-
 
   return (
     <VStack bg="white" key={post.id}>
@@ -79,8 +93,8 @@ function Post({ post }) {
       </Text>
       <Image p="2%" boxSize="60%" src={post.image} alt="Fire Alarm" />
 
-      <HStack align="center" mt="1%" mb="2%" width="80%">
-        <HStack mr="0%" onClick={() => handleLike(post.id)}>
+      <HStack align="left" mt="1%" mb="2%" width="90%">
+        <HStack onClick={() => handleLike(post.id)}>
           <IconButton
             icon={<FaRegThumbsUp />}
             aria-label="Like"
@@ -88,13 +102,17 @@ function Post({ post }) {
             color={likeStatus[post.id] ? "blue" : "grey"} // Change color when liked
             background="white"
           />
-          <Text fontWeight="bold" color="black">
-            {likeStatus[post.id] ? "Liked" : "Like"}{" "}
-            {/* Change text when liked */}
-          </Text>
+          <Text fontWeight="bold" color="black" marginRight={"1%"}>
+            {likeCount === 0 ? "" : likeCount}{" "}
+            {/* Display "Like" if 0, else display count */}
+          </Text>{" "}
+          {/* Display like count */}
         </HStack>
 
-        <HStack ml="10%" mr="8%" width="80%" onClick={() => toggleCommentInput(post.id)}>
+        <HStack
+          onClick={() => toggleCommentInput(post.id)}
+          ml="1%"
+        >
           <IconButton
             icon={<FaCommentDots />}
             fontSize="200%"
@@ -102,11 +120,14 @@ function Post({ post }) {
             background="white"
           />
           <Text fontWeight="bold" color="black">
-            Comment
+            {comments[post.id] && comments[post.id].length > 0
+              ? comments[post.id].length
+              : ""}
+            {/* Display "Comment" if no comments, else display count */}
           </Text>
         </HStack>
 
-        <HStack>
+        <HStack ml="2%">
           <IconButton
             icon={<FaShare />}
             aria-label="Share"
@@ -114,32 +135,34 @@ function Post({ post }) {
             color="grey"
             background="white"
           />
-          <Text fontWeight="bold" color="black">
-            Share
-          </Text>
         </HStack>
       </HStack>
       {/* Comments Section */}
-      <VStack width="80%" align="left">
+      <VStack width="90%" align="left">
         {comments[post.id] &&
           comments[post.id].map((comment, index) => (
             <HStack key={index} align="start" mb="3%">
-            <Image
-              boxSize="10%"
-              borderRadius="full"
-              src={comment.user.photo}
-              alt={comment.user.name}
-              mt="1%"
-            />
-            <VStack align="left"> 
-              <Text fontWeight="bold" fontSize="80%" color="black" align="left">
-                {comment.user.name}
-              </Text>
-              <Text fontSize="80%" color="black" align="left">
-                {comment.text}
-              </Text>
-            </VStack>
-          </HStack>
+              <Image
+                boxSize="10%"
+                borderRadius="full"
+                src={comment.user.photo}
+                alt={comment.user.name}
+                mt="1%"
+              />
+              <VStack align="left">
+                <Text
+                  fontWeight="bold"
+                  fontSize="80%"
+                  color="black"
+                  align="left"
+                >
+                  {comment.user.name}
+                </Text>
+                <Text fontSize="80%" color="black" align="left">
+                  {comment.text}
+                </Text>
+              </VStack>
+            </HStack>
           ))}
       </VStack>
 
@@ -162,7 +185,6 @@ function Post({ post }) {
           </Button>
         </HStack>
       )}
-
     </VStack>
   );
 }
