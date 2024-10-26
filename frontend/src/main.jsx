@@ -15,6 +15,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import AdminDashboardPage from "./Components/AdminDashboard/AdminDashboardPage.jsx";
 
 const router = createBrowserRouter([
+  { path: "/", element: <UserDashboard /> },
   { path: "/login", element: <App /> },
   { path: "/register", element: <RegisterForm /> },
   { path: "/makereport", element: <MakeReport /> },
