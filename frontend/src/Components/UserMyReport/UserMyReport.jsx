@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import NavBar from "../../Common/NavBar";
 import {
   Box,
@@ -40,6 +40,32 @@ const reports = [
 ];
 
 function UserMyReport() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredReports, setFilteredReports] = useState(reports);
+
+  // Function to handle the search action when the icon is clicked
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      setFilteredReports(
+        reports.filter((report) =>
+          report.description.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      );
+      setSearchActive(true);
+    } else {
+      setFilteredReports(reports);
+      setSearchActive(false);
+    }
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleSearch();
+    }
+  };
+
+  const reportsToRender = filteredReports;
+
   return (
     <div>
       <NavBar />
@@ -51,14 +77,19 @@ function UserMyReport() {
       </VStack>
       <HStack alignItems="center" mt="3%" position={"sticky"} m="3%" p="10px">
         <Input
+          onKeyDown={handleKeyDown}
           placeholder="Search For Your Reports"
+          value={searchQuery}
+          onChange={(e) => {
+            setSearchQuery(e.target.value);
+          }}
           height={45}
           borderRadius={25}
           backgroundColor="#D3D3D3"
-          border-color="black"
           ml="3%"
         />
         <IconButton
+          onClick={handleSearch}
           aria-label="Search"
           icon={<FaSearch />}
           fontSize="200%"
@@ -68,62 +99,63 @@ function UserMyReport() {
         />
       </HStack>
 
-      <Text
-        fontWeight="500"
-        mt="3%"
-        mr="5%"
-        mb="3%"
-        fontSize="100%"
-        align="right"
-        color="black"
-      ></Text>
+      <SortBy />
 
       <Text
         fontWeight="500"
         m="0 10% 0 10%"
         fontSize="300%"
-        align="centre"
+        align="center"
         color="black"
         borderRadius={40}
       >
         Active Reports
       </Text>
-      <SortBy />
+
       <VStack bg="white" align="center">
-        {reports
-          .filter((report) => report.isActive)
-          .map((report) => (
-            <Box
-              bg="#dddddd"
-              alignItems="center"
-              w="80%"
-              margin="3% 0px 3% 0px"
-              padding="3%"
-            >
-              <Image
-                mt="1%"
-                mr="3%"
-                boxSize="30%"
-                float="left"
-                src={report.image}
-                alt="Fire Alarm"
-              />
-              <Text
-                mt="4%"
-                align="left"
-                fontWeight="500"
-                fontSize="80%"
-                color="black"
+        {reportsToRender.length === 0 ? (
+          <Box bg="#dddddd" w="80%" margin="3% 0" padding="3%">
+            <Text fontWeight={"400"} fontSize={"120%"}>
+              No reports found
+            </Text>
+          </Box>
+        ) : (
+          reportsToRender
+            .filter((report) => report.isActive)
+            .map((report) => (
+              <Box
+                key={report.id}
+                bg="#dddddd"
+                alignItems="center"
+                w="80%"
+                margin="3% 0"
+                padding="3%"
               >
-                {report.description}
-              </Text>
-            </Box>
-          ))}
+                <Image
+                  mt="1%"
+                  mr="3%"
+                  boxSize="30%"
+                  float="left"
+                  src={report.image}
+                  alt="Report"
+                />
+                <Text
+                  mt="4%"
+                  align="left"
+                  fontWeight="500"
+                  fontSize="80%"
+                  color="black"
+                >
+                  {report.description}
+                </Text>
+              </Box>
+            ))
+        )}
       </VStack>
 
       <Text
         fontWeight="500"
-        mt="0%"
+        mt="5%"
         mb="0%"
         fontSize="300%"
         align="center"
@@ -132,35 +164,44 @@ function UserMyReport() {
         Past Reports
       </Text>
       <VStack bg="white" align="center">
-        {reports
-          .filter((report) => !report.isActive)
-          .map((report) => (
-            <Box
-              bg="#dddddd"
-              alignItems="center"
-              w="80%"
-              margin="3% 0px 3% 0px"
-              padding="3%"
-            >
-              <Image
-                mt="1%"
-                mr="3%"
-                boxSize="30%"
-                float="left"
-                src={report.image}
-                alt="Fire Alarm"
-              />
-              <Text
-                mt="4%"
-                align="left"
-                fontWeight="500"
-                fontSize="80%"
-                color="black"
+        {reportsToRender.length === 0 ? (
+          <Box bg="#dddddd" w="80%" margin="3% 0" padding="3%">
+            <Text fontWeight={"400"} fontSize={"120%"}>
+              No reports found
+            </Text>
+          </Box>
+        ) : (
+          reportsToRender
+            .filter((report) => !report.isActive)
+            .map((report) => (
+              <Box
+                key={report.id}
+                bg="#dddddd"
+                alignItems="center"
+                w="80%"
+                margin="3% 0"
+                padding="3%"
               >
-                {report.description}
-              </Text>
-            </Box>
-          ))}
+                <Image
+                  mt="1%"
+                  mr="3%"
+                  boxSize="30%"
+                  float="left"
+                  src={report.image}
+                  alt="Report"
+                />
+                <Text
+                  mt="4%"
+                  align="left"
+                  fontWeight="500"
+                  fontSize="80%"
+                  color="black"
+                >
+                  {report.description}
+                </Text>
+              </Box>
+            ))
+        )}
       </VStack>
     </div>
   );
