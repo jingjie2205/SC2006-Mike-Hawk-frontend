@@ -1,18 +1,30 @@
 import { Select } from "@chakra-ui/react";
 
-const SortBy = ({ sortOptions, onSortChange }) => {
+const SortBy = () => {
   return (
-    <Select
-      placeholder="Sort by"
-      onChange={(e) => onSortChange(e.target.value)}
-    >
-      {sortOptions.map((option, index) => (
-        <option key={index} value={option.value}>
-          {option.label}
-        </option>
-      ))}
-    </Select>
+    <SelectRoot collection={frameworks} size="sm" width="320px">
+      <SelectLabel>Select framework</SelectLabel>
+      <SelectTrigger>
+        <SelectValueText placeholder="Select movie" />
+      </SelectTrigger>
+      <SelectContent>
+        {frameworks.items.map((movie) => (
+          <SelectItem item={movie} key={movie.value}>
+            {movie.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </SelectRoot>
   );
 };
+
+const frameworks = createListCollection({
+  items: [
+    { label: "React.js", value: "react" },
+    { label: "Vue.js", value: "vue" },
+    { label: "Angular", value: "angular" },
+    { label: "Svelte", value: "svelte" },
+  ],
+});
 
 export default SortBy;

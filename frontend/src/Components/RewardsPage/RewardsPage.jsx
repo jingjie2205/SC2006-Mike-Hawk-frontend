@@ -17,14 +17,7 @@ function RewardsPage() {
   return (
     <div>
       <NavBar />
-      <Box
-        borderRadius="lg"
-        p="4"
-        maxW="1100px"
-        mx="auto"
-        mt="20px"
-        bg="white"
-      >
+      <Box borderRadius="lg" p="4" maxW="1100px" mx="auto" mt="20px" bg="white">
         <Box
           borderWidth="2px"
           borderRadius="lg"
@@ -45,7 +38,6 @@ function RewardsPage() {
         </Box>
         {/* VOUCHERS */}
         <Box
-          
           display={"flex"}
           flexDir={"column"}
           alignItems={"center"}
