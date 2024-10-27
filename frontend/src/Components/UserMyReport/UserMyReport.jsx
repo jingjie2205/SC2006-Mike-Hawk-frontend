@@ -16,7 +16,8 @@ import SortBy from "./SortBy";
 const reports = [
   {
     id: 1,
-    description: "Spoilt fire alarm at Jurong Point 5:30 PM, 3rd Sept 2024",
+    title: "Spoilt fire alarm at Jurong Point",
+    description: "Spoilt fire alarm at Jurong Point Level B1 near mens toilet",
     image: "src/Assets/FireAlarm.jpg",
     isActive: true,
     Datetime: "5:30 PM, 3rd Sept 2024",
@@ -24,7 +25,7 @@ const reports = [
   {
     id: 2,
     title: "Pothole at Tampines Street 81",
-    description: "Pothole at Tampines Street 81, 1:30pm 30th Aug 2024",
+    description: "Pothole at Tampines Street 81 beside block 824",
     image: "src/Assets/pothole.jpg",
     isActive: false,
     Datetime: "1:30pm 30th Aug 2024",
@@ -32,16 +33,18 @@ const reports = [
   {
     id: 3,
     title: "Aircon leak at Sengkang Interchange",
-    description: "Aircon leak at Sengkang Interchange, 5:00pm 12 May",
+    description:
+      "Aircon leak at Sengkang Interchange causing puddling, fall hazard",
     image: "src/Assets/AirconLeakage.webp",
     isActive: false,
-    Datetime: "5:00pm 12 May",
+    Datetime: "5:00pm 12th May 2023",
   },
 ];
 
 function UserMyReport() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredReports, setFilteredReports] = useState(reports);
+  const [sortOption, setSortOption] = useState("Most recent");
 
   // Function to handle the search action when the icon is clicked
   const handleSearch = () => {
@@ -51,10 +54,8 @@ function UserMyReport() {
           report.description.toLowerCase().includes(searchQuery.toLowerCase())
         )
       );
-      setSearchActive(true);
     } else {
       setFilteredReports(reports);
-      setSearchActive(false);
     }
   };
 
@@ -62,6 +63,10 @@ function UserMyReport() {
     if (event.key === "Enter") {
       handleSearch();
     }
+  };
+
+  const handleSortChange = (event) => {
+    setSortOption(event.target.value);
   };
 
   const reportsToRender = filteredReports;
@@ -98,12 +103,27 @@ function UserMyReport() {
           paddingRight="2%"
         />
       </HStack>
-
-      <SortBy />
+      <HStack justifyContent={"space-between"} width="100%">
+        <SortBy sortOption={sortOption} onSortChange={handleSortChange} />
+        <Text
+          fontSize="110%"
+          textDecor={"underline"}
+          textAlign="right"
+          mr="10%"
+          onClick={() => {
+            setSearchQuery(""); // Clear search input
+            setFilteredReports(reports);
+            // Optionally: you may want to also trigger a function that fetches all reports if needed
+          }}
+          cursor="pointer" // Change cursor to pointer for better UX
+        >
+          Show all reports
+        </Text>
+      </HStack>
 
       <Text
         fontWeight="500"
-        m="0 10% 0 10%"
+        mb="2%"
         fontSize="300%"
         align="center"
         color="black"
@@ -113,7 +133,7 @@ function UserMyReport() {
       </Text>
 
       <VStack bg="white" align="center">
-        {reportsToRender.length === 0 ? (
+        {reportsToRender.filter((report) => report.isActive).length === 0 ? (
           <Box bg="#dddddd" w="80%" margin="3% 0" padding="3%">
             <Text fontWeight={"400"} fontSize={"120%"}>
               No reports found
@@ -128,8 +148,8 @@ function UserMyReport() {
                 bg="#dddddd"
                 alignItems="center"
                 w="80%"
-                margin="3% 0"
-                padding="3%"
+                mb="5%"
+                padding="2.3%"
               >
                 <Image
                   mt="1%"
@@ -140,11 +160,28 @@ function UserMyReport() {
                   alt="Report"
                 />
                 <Text
+                  align="left"
+                  fontWeight="500"
+                  fontSize="190%"
+                  color="black"
+                >
+                  {report.title}
+                </Text>
+                <Text
                   mt="4%"
                   align="left"
                   fontWeight="500"
-                  fontSize="80%"
+                  fontSize="100%"
                   color="black"
+                >
+                  Date & time: {report.Datetime}
+                </Text>
+                <Text
+                  align="left"
+                  fontWeight="500"
+                  fontSize="100%"
+                  color="black"
+                  padding="0.5%"
                 >
                   {report.description}
                 </Text>
@@ -155,8 +192,8 @@ function UserMyReport() {
 
       <Text
         fontWeight="500"
-        mt="5%"
-        mb="0%"
+        mt="1%"
+        mb="2%"
         fontSize="300%"
         align="center"
         color="black"
@@ -164,7 +201,7 @@ function UserMyReport() {
         Past Reports
       </Text>
       <VStack bg="white" align="center">
-        {reportsToRender.length === 0 ? (
+        {reportsToRender.filter((report) => !report.isActive).length === 0 ? (
           <Box bg="#dddddd" w="80%" margin="3% 0" padding="3%">
             <Text fontWeight={"400"} fontSize={"120%"}>
               No reports found
@@ -179,8 +216,8 @@ function UserMyReport() {
                 bg="#dddddd"
                 alignItems="center"
                 w="80%"
-                margin="3% 0"
-                padding="3%"
+                mb="5%"
+                padding="2.3%"
               >
                 <Image
                   mt="1%"
@@ -191,11 +228,28 @@ function UserMyReport() {
                   alt="Report"
                 />
                 <Text
-                  mt="4%"
                   align="left"
                   fontWeight="500"
-                  fontSize="80%"
+                  fontSize="190%"
                   color="black"
+                >
+                  {report.title}
+                </Text>
+                <Text
+                  mt="2%"
+                  align="left"
+                  fontWeight="500"
+                  fontSize="100%"
+                  color="black"
+                >
+                  Date & time: {report.Datetime}
+                </Text>
+                <Text
+                  align="left"
+                  fontWeight="500"
+                  fontSize="100%"
+                  color="black"
+                  padding="0.5%"
                 >
                   {report.description}
                 </Text>
