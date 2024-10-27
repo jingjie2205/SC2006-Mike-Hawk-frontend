@@ -96,6 +96,8 @@ function RewardsCard({
         height={"200px"}
         className="rewards-card"
         onClick={!isAdmin ? onRedemptionOpen : undefined}
+        backgroundColor="#dddddd"
+        mb="2%"
       >
         <CardBody
           width={"500px"}
@@ -109,6 +111,7 @@ function RewardsCard({
             height="90px"
             rounded={3}
             alignContent={"center"}
+            ml="3%"
           />
           <Box
             justifyContent="space-between"

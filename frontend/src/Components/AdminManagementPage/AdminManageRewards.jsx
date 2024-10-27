@@ -68,7 +68,7 @@ function AdminManageRewards() {
         closeOnBlur={false}
       >
         <PopoverTrigger>
-          <Button colorScheme="blue" padding={5}>
+          <Button colorScheme="blue" padding={5} mb="2%">
             Add Voucher
           </Button>
         </PopoverTrigger>

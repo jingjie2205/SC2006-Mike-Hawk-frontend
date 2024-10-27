@@ -16,20 +16,30 @@ import {
   Td,
   TableCaption,
   TableContainer,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter, 
+  Button
 } from "@chakra-ui/react";
 import { FaSearch } from "react-icons/fa";
 
 function AdminManageUser() {
   const [users, setUsers] = useState([
-    { id: 1, username: "Aaron" },
-    { id: 2, username: "Allen" },
-    { id: 3, username: "David" },
-    { id: 4, username: "Anna" },
-    { id: 5, username: "Amanda" }
+    { id: 1, username: "Aaron", email: "aaron@example.com" },
+    { id: 2, username: "Allen", email: "allen@example.com" },
+    { id: 3, username: "David", email: "david@example.com" },
+    { id: 4, username: "Anna", email: "anna@example.com" },
+    { id: 5, username: "Amanda", email: "amanda@example.com" }
   ]);
   
-  const [searchTerm, setSearchTerm] = useState(""); // State for search term
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm); // State for debounced search term
+  const [searchTerm, setSearchTerm] = useState(""); 
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm); 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   // Function to handle search input changes
   const handleSearchChange = (e) => {
@@ -40,7 +50,7 @@ function AdminManageUser() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
-    }, 900); // 2-second delay
+    }, 900); 
 
     return () => clearTimeout(timer); // Clean up timeout if user types again before 2 seconds
   }, [searchTerm]); // Runs whenever searchTerm changes
@@ -49,6 +59,34 @@ function AdminManageUser() {
   const filteredUsers = users.filter((user) =>
     user.username.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
   );
+
+  // Open modal to edit selected user
+  const openModal = (user) => {
+    setSelectedUser({ ...user });
+    setIsModalOpen(true);
+  };
+
+  // Close modal
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedUser(null);
+  };
+
+  // Handle input change in modal
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setSelectedUser((prevUser) => ({ ...prevUser, [name]: value }));
+  };
+
+  // Save changes made in modal
+  const handleSaveChanges = () => {
+    setUsers((prevUsers) =>
+      prevUsers.map((user) =>
+        user.id === selectedUser.id ? selectedUser : user
+      )
+    );
+    closeModal();
+  };
 
   return (
     <div>
@@ -93,10 +131,10 @@ function AdminManageUser() {
 
       <TableContainer>
         <Table variant="simple">
-        <Tbody>
+          <Tbody>
             {filteredUsers.length > 0 ? (
               filteredUsers.map((user) => (
-                <Tr key={user.id}>
+                <Tr key={user.id} onClick={() => openModal(user)} _hover={{ bg: "gray.100", cursor: "pointer" }}>
                   <Td>{user.id}</Td>
                   <Td>{user.username}</Td>
                 </Tr>
@@ -109,6 +147,39 @@ function AdminManageUser() {
           </Tbody>
         </Table>
       </TableContainer>
+
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Edit User</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text mb="8px">Username:</Text>
+            <Input
+              name="username"
+              value={selectedUser?.username || ""}
+              onChange={handleInputChange}
+              placeholder="Enter new username"
+              mb={4}
+            />
+            <Text mb="8px">Email:</Text>
+            <Input
+              name="email"
+              value={selectedUser?.email || ""}
+              onChange={handleInputChange}
+              placeholder="Enter new email"
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={handleSaveChanges}>
+              Save
+            </Button>
+            <Button variant="ghost" onClick={closeModal}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   );
 }
