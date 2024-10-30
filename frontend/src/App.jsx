@@ -8,11 +8,12 @@ function App() {
     <Box
       bgGradient="linear(to-r, teal.500, green.500)" // Set your background here
       minHeight="100vh" // Ensures it covers the full height of the viewport
-      minWidth="100vh"
+      minWidth="100vw"
       display="flex"
       justifyContent="center"
       alignItems="center"
-      width="100%"
+      width="100vw"
+      
     >
       <LoginForm />;
     </Box>

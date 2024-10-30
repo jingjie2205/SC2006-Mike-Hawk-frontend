@@ -124,7 +124,7 @@ function UserMyReport() {
       <Text
         fontWeight="500"
         mb="2%"
-        fontSize="300%"
+        fontSize="250%"
         align="center"
         color="black"
         borderRadius={40}
@@ -162,21 +162,21 @@ function UserMyReport() {
                 <Text
                   align="left"
                   fontWeight="500"
-                  fontSize="190%"
+                  fontSize="150%"
                   color="black"
                 >
                   {report.title}
                 </Text>
                 <Text
-                  mt="4%"
                   align="left"
                   fontWeight="500"
-                  fontSize="100%"
+                  fontSize="80%"
                   color="black"
                 >
                   Date & time: {report.Datetime}
                 </Text>
                 <Text
+                  mt="5%"
                   align="left"
                   fontWeight="500"
                   fontSize="100%"
@@ -194,7 +194,7 @@ function UserMyReport() {
         fontWeight="500"
         mt="1%"
         mb="2%"
-        fontSize="300%"
+        fontSize="250%"
         align="center"
         color="black"
       >
@@ -230,21 +230,21 @@ function UserMyReport() {
                 <Text
                   align="left"
                   fontWeight="500"
-                  fontSize="190%"
+                  fontSize="150%"
                   color="black"
                 >
                   {report.title}
                 </Text>
                 <Text
-                  mt="2%"
                   align="left"
                   fontWeight="500"
-                  fontSize="100%"
+                  fontSize="80%"
                   color="black"
                 >
                   Date & time: {report.Datetime}
                 </Text>
                 <Text
+                  mt="5%"
                   align="left"
                   fontWeight="500"
                   fontSize="100%"

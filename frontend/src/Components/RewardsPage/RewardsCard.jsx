@@ -97,7 +97,7 @@ function RewardsCard({
         className="rewards-card"
         onClick={!isAdmin ? onRedemptionOpen : undefined}
         backgroundColor="#dddddd"
-        mb="2%"
+        mb="5%"
       >
         <CardBody
           width={"500px"}

@@ -25,28 +25,25 @@ function NavBar() {
   return (
     <Box
       bg="gray.800"
-      px={10}
-      maxWidth="1200px" // Limits the width of the navbar
-      borderRadius="20px" // Makes the navbar rounded
-      mx="auto" // Centers the navbar horizontally
+      width="90vw" // Limits the width of the navbar
+      borderRadius="25px" // Makes the navbar rounded
       mt={4} // Adds top margin for spacing
       py={2} // Adds some padding for vertical spacing
+      ml="5%"
+      mr="5%"
       shadow="md"
     >
-      <Flex alignItems="center" justifyContent="space-between">
-        <HStack spacing={8} alignItems="center">
-          <Box>
-            <Image
-              src="/RQ.png"
-              alt="ReportQuest Logo"
-              width="50px"
-              height="50px"
-              rounded={3}
-            />
-          </Box>
-
+      <Flex>
+        <HStack>
+          <Image
+            src="/RQ.png"
+            alt="ReportQuest Logo"
+            height="50"
+            rounded="50%"
+            ml="10%"
+            mr="5%"/>
           {/* Navigation Links */}
-          <HStack as="nav" spacing={6} alignItems="center">
+          <HStack as="nav1" spacing="10%" mr="50%">
             <Tooltip label="Dashboard">
               <Link as={RouterLink} to="/userdashboard">
                 <IoHomeOutline size={30} color="white" />
@@ -67,8 +64,12 @@ function NavBar() {
                 <IoFileTrayFullOutline size={30} color="white" />
               </Link>
             </Tooltip>
-            <Divider orientation="vertical" color={"whiteAlpha.400"} />
-            <Tooltip label="Manage">
+          </HStack>
+          
+          <Spacer />
+
+          <HStack as="nav2" spacing="10%">
+            <Tooltip label="Manage" >
               <Link as={RouterLink} to="/adminmanagement">
                 <MdManageSearch size={30} color="white" />
               </Link>
@@ -78,17 +79,14 @@ function NavBar() {
                 <TbAlertSquare size={30} color="white" />
               </Link>
             </Tooltip>
+            <Tooltip label="Profile">
+              <Link as={RouterLink} to="/profile">
+                <FaUserCircle size={30} color="white"/>
+              </Link>
+            </Tooltip>
           </HStack>
-        </HStack>
 
-        <Spacer />
-        <Box>
-          <Link as={RouterLink} to="/profile">
-            <Button bg="transparent" _hover={{ bg: "gray.800" }}>
-              <FaUserCircle size={30} color="white" />
-            </Button>
-          </Link>
-        </Box>
+        </HStack>
       </Flex>
     </Box>
   );

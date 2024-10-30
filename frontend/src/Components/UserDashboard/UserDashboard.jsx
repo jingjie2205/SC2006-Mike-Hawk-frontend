@@ -62,10 +62,9 @@ function UserDashboard() {
   }, [debouncedTerm]);
 
   return (
-    <div>
-      <NavBar />
-
-      <VStack bg="#06ADBF" mt="3%">
+    <div vw="100%" >
+      <NavBar/>
+      <VStack bg="#06ADBF" mt="3%" >
         <Text
           fontWeight="1000"
           mt="3%"
@@ -107,7 +106,7 @@ function UserDashboard() {
 
       {/* Render filtered reports */}
       {filteredPosts.map((post) => (
-        <Post key={post.id} post={post} />
+        <Post key={post.id} post={post} vw="100vw"/>
       ))}
     </div>
   );
