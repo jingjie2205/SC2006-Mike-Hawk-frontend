@@ -23,7 +23,7 @@ function ReportItem({ report }) {
         {report.title}
       </Text>
       <Text align="left" fontWeight="500" fontSize="80%" color="black">
-        Date & time: {report.Datetime}
+        Date: {report.Date}
       </Text>
       <Text
         mt="5%"

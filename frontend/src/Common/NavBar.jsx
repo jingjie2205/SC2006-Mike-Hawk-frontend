@@ -25,12 +25,12 @@ function NavBar() {
   return (
     <Box
       bg="gray.800"
-      width="90vw" // Limits the width of the navbar
+      width="96vw" // Limits the width of the navbar
       borderRadius="25px" // Makes the navbar rounded
       mt={4} // Adds top margin for spacing
       py={2} // Adds some padding for vertical spacing
-      ml="5%"
-      mr="5%"
+      ml="2%"
+      mr="2%"
       shadow="md"
     >
       <Flex>
@@ -40,10 +40,10 @@ function NavBar() {
             alt="ReportQuest Logo"
             height="50"
             rounded="50%"
-            ml="10%"
+            ml="5%"
             mr="5%"/>
           {/* Navigation Links */}
-          <HStack as="nav1" spacing="10%" mr="50%">
+          <HStack as="nav" spacing="6%">
             <Tooltip label="Dashboard">
               <Link as={RouterLink} to="/userdashboard">
                 <IoHomeOutline size={30} color="white" />
@@ -59,16 +59,11 @@ function NavBar() {
                 <IoGiftOutline size={30} color="white" />
               </Link>
             </Tooltip>
-            <Tooltip label="My Reports">
+            <Tooltip label="My Reports" >
               <Link as={RouterLink} to="/myreports">
                 <IoFileTrayFullOutline size={30} color="white" />
               </Link>
             </Tooltip>
-          </HStack>
-          
-          <Spacer />
-
-          <HStack as="nav2" spacing="10%">
             <Tooltip label="Manage" >
               <Link as={RouterLink} to="/adminmanagement">
                 <MdManageSearch size={30} color="white" />
