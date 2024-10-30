@@ -43,7 +43,7 @@ function NavBar() {
             ml="5%"
             mr="5%"/>
           {/* Navigation Links */}
-          <HStack as="nav" spacing="6%">
+          <HStack as="nav" spacing="5%">
             <Tooltip label="Dashboard">
               <Link as={RouterLink} to="/userdashboard">
                 <IoHomeOutline size={30} color="white" />
