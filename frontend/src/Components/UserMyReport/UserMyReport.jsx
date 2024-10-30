@@ -11,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { FaSearch } from "react-icons/fa";
 import SortBy from "./SortBy";
+import ReportItem from "./ReportItem";
 
 // Sample report data
 const reports = [
@@ -80,6 +81,7 @@ function UserMyReport() {
           My Reports
         </Text>
       </VStack>
+
       <HStack alignItems="center" mt="3%" position={"sticky"} m="3%" p="10px">
         <Input
           onKeyDown={handleKeyDown}
@@ -143,49 +145,7 @@ function UserMyReport() {
           reportsToRender
             .filter((report) => report.isActive)
             .map((report) => (
-              <Box
-                key={report.id}
-                bg="#dddddd"
-                alignItems="center"
-                w="80%"
-                mb="5%"
-                padding="2.3%"
-              >
-                <Image
-                  mt="1%"
-                  mr="3%"
-                  boxSize="30%"
-                  float="left"
-                  src={report.image}
-                  alt="Report"
-                />
-                <Text
-                  align="left"
-                  fontWeight="500"
-                  fontSize="150%"
-                  color="black"
-                >
-                  {report.title}
-                </Text>
-                <Text
-                  align="left"
-                  fontWeight="500"
-                  fontSize="80%"
-                  color="black"
-                >
-                  Date & time: {report.Datetime}
-                </Text>
-                <Text
-                  mt="5%"
-                  align="left"
-                  fontWeight="500"
-                  fontSize="100%"
-                  color="black"
-                  padding="0.5%"
-                >
-                  {report.description}
-                </Text>
-              </Box>
+              <ReportItem key={report.id} report={report} />
             ))
         )}
       </VStack>
@@ -211,49 +171,7 @@ function UserMyReport() {
           reportsToRender
             .filter((report) => !report.isActive)
             .map((report) => (
-              <Box
-                key={report.id}
-                bg="#dddddd"
-                alignItems="center"
-                w="80%"
-                mb="5%"
-                padding="2.3%"
-              >
-                <Image
-                  mt="1%"
-                  mr="3%"
-                  boxSize="30%"
-                  float="left"
-                  src={report.image}
-                  alt="Report"
-                />
-                <Text
-                  align="left"
-                  fontWeight="500"
-                  fontSize="150%"
-                  color="black"
-                >
-                  {report.title}
-                </Text>
-                <Text
-                  align="left"
-                  fontWeight="500"
-                  fontSize="80%"
-                  color="black"
-                >
-                  Date & time: {report.Datetime}
-                </Text>
-                <Text
-                  mt="5%"
-                  align="left"
-                  fontWeight="500"
-                  fontSize="100%"
-                  color="black"
-                  padding="0.5%"
-                >
-                  {report.description}
-                </Text>
-              </Box>
+              <ReportItem key={report.id} report={report} />
             ))
         )}
       </VStack>
