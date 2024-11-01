@@ -118,19 +118,16 @@ const RegisterForm = () => {
   );
 
   return (
-    <div>
-      <NavBar />
+    <div height="100%" minHeight="100vh">
       <Box
-        bgGradient="linear(to-r, teal.500, green.500)" // Set your background here
-        minHeight="100vh" // Ensures it covers the full height of the viewport
-        minWidth="100vh"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        width="100%"
-      >
+      bgGradient="linear(to-r, teal.500, green.500)" // Set your background here
+      minHeight="100vh" // Ensures it covers the full height of the viewport
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      width="100vw"
+    >
         <Box
-          w={["full", "md"]}
           p={[8, 10]}
           border={["none", "1px solid #e8e8e8"]}
           borderColor={["", "gray.200"]}
@@ -142,6 +139,7 @@ const RegisterForm = () => {
           <Image
             src="./public/RQ.png"
             alt="ReportQuest Logo"
+            width="100%"
             rounded={10}
             paddingBottom={3}
           />
