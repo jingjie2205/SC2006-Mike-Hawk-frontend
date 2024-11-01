@@ -42,7 +42,6 @@ function RewardsPage() {
           flexDir={"column"}
           alignItems={"center"}
           paddingTop={"20px"}
-          ml={"10%"}
         >
           {/* HARD CODED VALUE FOR TESTING */}
           {vouchers.map((reward, index) => (
