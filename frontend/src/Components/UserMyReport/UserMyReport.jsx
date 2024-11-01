@@ -1,13 +1,6 @@
 import React, { useState, useMemo } from "react";
 import NavBar from "../../Common/NavBar";
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
-  Button,
   Box,
   Text,
   Input,
