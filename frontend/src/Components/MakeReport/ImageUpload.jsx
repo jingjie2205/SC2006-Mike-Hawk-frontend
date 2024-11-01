@@ -36,7 +36,7 @@ function ImageUpload() {
         variant="unstyled"
       />
       <Box
-        w="400px"
+        w="100%"
         h="300px"
         borderWidth={image ? "" : "2px"}
         borderStyle={image ? "solid" : "dashed"}

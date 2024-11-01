@@ -36,7 +36,7 @@ function MakeReport() {
         borderRadius="lg"
         boxShadow="sm"
         p="4"
-        maxW="1100px"
+        maxW="100%"
         mx="auto"
         mt="20px"
         bg="white"
@@ -48,7 +48,7 @@ function MakeReport() {
         <Textarea
           placeholder="Provide Details Of The Issue"
           maxW="lg"
-          w="1000px"
+          w="100%"
           resize="vertical"
           isInvalid={validity}
           onChange={setDescription}

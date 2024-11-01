@@ -64,13 +64,13 @@ function NavBar() {
                 <IoFileTrayFullOutline size={30} color="white" />
               </Link>
             </Tooltip>
-            <Tooltip label="Manage" >
+            <Tooltip label="Admin" >
               <Link as={RouterLink} to="/adminmanagement">
                 <MdManageSearch size={30} color="white" />
               </Link>
             </Tooltip>
-            <Tooltip label="Review">
-              <Link as={RouterLink} to="/dashboard">
+            <Tooltip label="Authority">
+              <Link as={RouterLink} to="/authoritymyreports">
                 <TbAlertSquare size={30} color="white" />
               </Link>
             </Tooltip>

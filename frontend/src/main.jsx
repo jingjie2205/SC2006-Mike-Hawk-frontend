@@ -13,6 +13,8 @@ import UserDashboard from "./Components/UserDashboard/UserDashboard.jsx";
 import AdminManagementPage from "./Components/AdminManagementPage/AdminManagementPage.jsx";
 import { QueryClient, QueryClientProvider } from "react-query";
 import AdminDashboardPage from "./Components/AdminDashboard/AdminDashboardPage.jsx";
+import AuthorityMyReport from "./Components/AuthorityMyReport/AuthorityMyReport.jsx";
+import ReportDetail from "./Components/UserMyReport/ReportDetail";
 
 const router = createBrowserRouter([
   { path: "/", element: <UserDashboard /> },
@@ -22,9 +24,11 @@ const router = createBrowserRouter([
   { path: "/profile", element: <ProfilePage /> },
   { path: "/rewards", element: <RewardsPage /> },
   { path: "/myreports", element: <UserMyReport /> },
+  { path: "/report/:id", element: <ReportDetail /> },
   { path: "/userdashboard", element: <UserDashboard /> },
   { path: "/adminmanagement", element: <AdminManagementPage /> },
-  { path: "/dashboard", element: <AdminDashboardPage /> },
+  { path: "/authoritymyreports", element: <AuthorityMyReport /> },
+
 ]);
 
 const queryClient = new QueryClient();

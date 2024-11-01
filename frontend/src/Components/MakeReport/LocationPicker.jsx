@@ -92,10 +92,10 @@ function LocationPicker() {
 
   return (
     <div className="map-container">
-      <Button colorScheme="teal" onClick={handleGetLocation} mt={4}>
+      <Button colorScheme="teal" onClick={handleGetLocation} mt={4} mb={4}>
         Get My Location
       </Button>
-      <MapContainer center={position} zoom={15} scrollWheelZoom={true}>
+      <MapContainer center={position} zoom={15} scrollWheelZoom={true} width="80%">
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

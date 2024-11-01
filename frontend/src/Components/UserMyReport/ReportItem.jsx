@@ -1,9 +1,10 @@
 import React from "react";
 import { Box, Text, Image } from "@chakra-ui/react";
 
-function ReportItem({ report }) {
+function ReportItem({ report, onClick }) {
   return (
     <Box
+      onClick={onClick}
       key={report.id}
       bg="#dddddd"
       alignItems="center"

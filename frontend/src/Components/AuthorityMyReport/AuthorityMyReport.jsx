@@ -1,13 +1,6 @@
 import React, { useState, useMemo } from "react";
 import NavBar from "../../Common/NavBar";
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
-  Button,
   Box,
   Text,
   Input,
@@ -16,9 +9,8 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import { FaSearch } from "react-icons/fa";
-import SortBy from "./SortBy";
-import ReportItem from "./ReportItem";
-import { useNavigate } from "react-router-dom";
+import SortBy from "../UserMyReport/SortBy";
+import ReportItem from "../UserMyReport/ReportItem";
 
 // Sample report data
 const reports = [
@@ -55,7 +47,6 @@ function UserMyReport() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredReports, setFilteredReports] = useState(reports);
   const [sortOption, setSortOption] = useState("Newest");
-  const navigate = useNavigate();
 
   const handleSearch = () => {
     setFilteredReports(
@@ -88,15 +79,13 @@ function UserMyReport() {
     if (sortOption === "Most Severe") {
       return sortReports.sort((a, b) => b.severity - a.severity);
     }
+    
     if (sortOption === "Least Severe") {
       return sortReports.sort((a, b) => a.severity - b.severity);
     }
+    
     return sortReports;
   }, [filteredReports, sortOption]);
-
-  const openReportDetails = (reportId) => {
-    navigate(`/report/${reportId}`);
-  };
 
   return (
     <div>
@@ -161,7 +150,7 @@ function UserMyReport() {
         ) : (
           sortedReports
             .filter((report) => report.isActive)
-            .map((report) => <ReportItem key={report.id} report={report} onClick={() => openReportDetails(report.id)}/>)
+            .map((report) => <ReportItem key={report.id} report={report} />)
         )}
       </VStack>
 
@@ -179,8 +168,7 @@ function UserMyReport() {
         ) : (
           sortedReports
             .filter((report) => !report.isActive)
-            .map((report) => <ReportItem key={report.id} report={report} onClick={() => openReportDetails(report.id)}
-/>)
+            .map((report) => <ReportItem key={report.id} report={report} />)
         )}
       </VStack>
     </div>
