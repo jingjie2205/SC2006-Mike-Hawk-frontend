@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import "../LoginForm/LoginForm.css";
 import NavBar from "../../Common/NavBar";
+import axios from "axios";
+
 import {
   Box,
   FormControl,
@@ -22,75 +24,99 @@ const RegisterForm = () => {
 
   // States
   const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState(false);
+  const [emptyError, setEmptyError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  const [duplicateEntryError, setDuplicateEntryError] = useState(false);
+  const [invalidEmail, setInvalidEmailError] = useState(false);
 
   const handleName = (e) => {
     setName(e.target.value);
     setSubmitted(false);
-    setError(false);
+    setEmptyError(false);
     setPasswordError(false);
+    setDuplicateEntryError(false);
   };
 
   const handlePassword = (e) => {
     setPassword(e.target.value);
     setSubmitted(false);
-    setError(false);
+    setEmptyError(false);
     setPasswordError(false);
+    setDuplicateEntryError(false);
   };
 
   const handleConfirmPassword = (e) => {
     setConfirmPassword(e.target.value);
     setSubmitted(false);
-    setError(false);
+    setEmptyError(false);
     setPasswordError(false);
+    setDuplicateEntryError(false);
   };
 
   const handleEmail = (e) => {
     setEmail(e.target.value);
     setSubmitted(false);
-    setError(false);
+    setEmptyError(false);
     setPasswordError(false);
+    setDuplicateEntryError(false);
   };
 
-  const handleSubmit = (e) => {
+  const validateEmail = (email) => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailPattern.test(email);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (name === "" || password === "" || confirmPassword === "") {
-      setError(true);
-      setSubmitted(false);
-      setConfirmPasswordError(false);
-    } else if (password !== confirmPassword) {
+
+    if (
+      name === "" ||
+      password === "" ||
+      confirmPassword === "" ||
+      email === ""
+    ) {
+      setEmptyError(true);
+      return
+    } 
+    
+    if (password !== confirmPassword) {
       setPasswordError(true);
-      setError(false);
-      setSubmitted(false);
-    } else {
-      setError(false);
-      setPasswordError(false);
-      setSubmitted(true);
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      // Set an error state for invalid email
+      setInvalidEmailError(true);
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/public/public/register",
+        {
+          userName: name,
+          password: password,
+          emailAddress: email,
+        }
+      );
+      if (response.status === 201) {
+        setSubmitted(true);
+        //Redirect user to login page
+        window.location.href = "/login";
+      }
+    } catch (err) {
+      if (err.response && err.response.status === 400) {
+        setDuplicateEntryError(true);
+      }
     }
   };
 
-  // return messages
-  const successMessage = () => (
-    <Box class="successMessage" border="3px solid green">
-      <p>Successfully Registered</p>
-      <Link to="/login">Login</Link>
+  const MessageBox = ({ children, type }) => (
+    <Box className={`${type}Message`} border={`3px solid ${type === "success" ? "green" : "red"}`}>
+      <p>{children}</p>
     </Box>
   );
 
-  const errorMessage = () => (
-    <Box class="errorMessage" border="3px solid red">
-      <p>Error! Missing Fields</p>
-      <Link to="/register">Register</Link>
-    </Box>
-  );
-
-  const passwordErrorMessage = () => (
-    <Box class="errorMessage" border="3px solid red">
-      <p>Passwords do not match</p>
-      <Link to="/register">Register</Link>
-    </Box>
-  );
   return (
     <div>
       <NavBar />
@@ -120,9 +146,11 @@ const RegisterForm = () => {
             paddingBottom={3}
           />
           <div className="messages">
-            {error && errorMessage()}
-            {passwordError && passwordErrorMessage()}
-            {submitted && successMessage()}
+            {emptyError && <MessageBox type="error">Please fill all fields</MessageBox>}
+            {passwordError && <MessageBox type="error">Passwords do not match</MessageBox>}
+            {duplicateEntryError && <MessageBox type="error">Username/Email used</MessageBox>}
+            {invalidEmail && <MessageBox type="error">Invalid email format</MessageBox>}
+            {submitted && <MessageBox type="success">Successfully Registered</MessageBox>}
           </div>
 
           <FormControl>
@@ -134,6 +162,7 @@ const RegisterForm = () => {
                 rounded={20}
                 onChange={handleName}
                 value={name}
+                required
               />
             </div>
             <FormLabel htmlFor="Password">Password</FormLabel>
@@ -144,6 +173,7 @@ const RegisterForm = () => {
                 rounded={20}
                 onChange={handlePassword}
                 value={password}
+                required
               />
             </div>
             <FormLabel htmlFor="Password">Confirm Password</FormLabel>
@@ -154,16 +184,18 @@ const RegisterForm = () => {
                 rounded={20}
                 onChange={handleConfirmPassword}
                 value={confirmPassword}
+                required
               />
             </div>
             <FormLabel htmlFor="Password">Email</FormLabel>
             <div class="wrapper">
               <Input
                 id="email"
-                type="text"
+                type="email"
                 rounded={20}
                 onChange={handleEmail}
                 value={email}
+                required
               />
             </div>
             <Button
