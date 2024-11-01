@@ -14,11 +14,32 @@ function MakeReport() {
   const [dateValue, setDateValue] = useState(new Date());
   const [validity, setValidity] = useState(false);
   const [description, setDescription] = useState("");
+  const [location, setLocation] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+
+  const handleImageSelect = (file) => {
+    setImageFile(file);
+  };
+
+  const handleLocationChange = (newLocation) => {
+    setLocation(newLocation);
+    console.log("Location updated:", newLocation);
+  };
 
   const handleSubmit = async (e) => {
+    const epochTime = Math.floor(dateValue.getTime() / 1000);
+    console.log(epochTime);
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/reports/report/user/ce4339f1-7598-434a-9e2c-8351eaca5af7"
+        "http://127.0.0.1:8000/reports/reports/submit-report/",
+        {
+          user_id: localStorage.getItem("userId"),
+          description: description,
+          title: "",
+          location: (location[0].toString(), location[1].toString()),
+          time: epochTime,
+          image: imageFile,
+        }
       );
       console.log(response);
     } catch (error) {
@@ -44,7 +65,7 @@ function MakeReport() {
         flexDirection="column"
         alignItems="center"
       >
-        <ImageUpload />
+        <ImageUpload onImageSelect={handleImageSelect} />
         <Textarea
           placeholder="Provide Details Of The Issue"
           maxW="lg"
@@ -54,10 +75,21 @@ function MakeReport() {
           onChange={setDescription}
         />
         <Box position="relative" paddingTop={5} paddingBottom={5}>
-          <DateTimePicker value={dateValue} onChange={setDateValue} />
+          <DateTimePicker
+            value={dateValue}
+            onChange={(e) => {
+              setDateValue(e);
+              console.log(dateValue, typeof dateValue);
+            }}
+          />
         </Box>
-        <LocationPicker />
-        <Button colorScheme="blue" borderRadius={20} mt={4}>
+        <LocationPicker onLocationChange={handleLocationChange} />
+        <Button
+          colorScheme="blue"
+          borderRadius={20}
+          mt={4}
+          onClick={handleSubmit}
+        >
           Submit
         </Button>
       </Box>

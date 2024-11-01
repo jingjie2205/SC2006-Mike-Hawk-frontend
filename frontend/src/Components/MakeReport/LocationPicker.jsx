@@ -29,7 +29,7 @@ function SetViewOnLocation({ location }) {
   return null;
 }
 
-function LocationPicker() {
+function LocationPicker({ onLocationChange }) {
   const [position, setPosition] = useState([1.28967, 103.85007]); // Initial position (Singapore)
 
   const LeafletgeoSearch = () => {

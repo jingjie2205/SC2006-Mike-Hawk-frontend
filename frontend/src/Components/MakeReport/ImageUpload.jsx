@@ -10,14 +10,15 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 
-function ImageUpload() {
+function ImageUpload({ onImageSelect }) {
   const [image, setImage] = useState(null);
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       // Store the image file in state
-      setImage(URL.createObjectURL(file));
+      setImage(file);
+      onImageSelect(file);
     }
   };
 
