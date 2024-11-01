@@ -92,7 +92,7 @@ function RewardsCard({
     <>
       <Card
         as={!isAdmin ? "button" : undefined}
-        width={"500px"}
+        width={"100%"}
         height={"200px"}
         className="rewards-card"
         onClick={!isAdmin ? onRedemptionOpen : undefined}
@@ -100,7 +100,7 @@ function RewardsCard({
         mb="5%"
       >
         <CardBody
-          width={"500px"}
+          width={"100%"}
           height={"200px"}
           display="flex"
           alignItems={"center"}
