@@ -1,19 +1,53 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import NavBar from "../../Common/NavBar";
 import RewardsCard from "./RewardsCard";
 import { Box, Text, Stat, StatLabel, StatNumber } from "@chakra-ui/react";
 
 function RewardsPage() {
-  /* HARD CODED FOR TESTING */
-  const vouchers = [
-    { image: "../../public/macs.png", name: "Macs", points: 100, amount: 10 },
-    {
-      image: "../../public/fairprice.png",
-      name: "FairPice",
-      points: 150,
-      amount: 10,
-    },
-  ];
+  const [rewards, setRewards] = useState([]);
+  const [userPoints, setUserPoints] = useState([]);
+  const [error, setError] = useState(null);
+  const userId = localStorage.getItem("userId"); // Fetch userId from local storage
+
+  // Fetch userPoints from the database
+  useEffect(() => {
+    const fetchUserPoints = async () => {
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/users/users?user_id=${userId}`);
+        if (response.status === 200) {
+          setUserPoints(response.data.points);
+        }
+      } catch (err) {
+        console.error("Error fetching user points:", err);
+        setError("Failed to fetch user points. Please try again later.");
+      }
+    };
+
+    if (userId) {
+      fetchUserPoints();
+    }
+  }, [userId]);
+
+   // Fetch rewards from the database
+   useEffect(() => {
+    const fetchRewards = async () => {
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/rewards/rewards/all`);
+        if (response.status === 200) {
+          const sortedRewards = response.data.sort((a, b) =>
+            a.description.localeCompare(b.description)
+          );
+          setRewards(sortedRewards);
+        }
+      } catch (err) {
+        console.error("Error fetching rewards:", err);
+        setError("Failed to fetch rewards. Please try again later.");
+      }
+    };
+    fetchRewards();
+  }, [userId]);
+
   return (
     <div>
       <NavBar />
@@ -32,8 +66,7 @@ function RewardsPage() {
           {/* USER's POINTS */}
           <Stat>
             <StatLabel>Total Points</StatLabel>
-            {/* HARD CODED VALUE FOR TESTING */}
-            <StatNumber>100</StatNumber>
+            <StatNumber>{userPoints}</StatNumber>
           </Stat>
         </Box>
         {/* VOUCHERS */}
@@ -43,15 +76,15 @@ function RewardsPage() {
           alignItems={"center"}
           paddingTop={"20px"}
         >
-          {/* HARD CODED VALUE FOR TESTING */}
-          {vouchers.map((reward, index) => (
+          {error && <Text color="red.500">{error}</Text>}
+          {rewards.map((reward, index) => (
             <RewardsCard
-              key={index}
-              image={reward.image}
-              name={reward.name}
-              points={reward.points}
-              amount={reward.amount}
-              userPoints={100}
+              rewardID={reward.rewardID}
+              description={reward.description}
+              pointsRequired={reward.pointsRequired}
+              validity={reward.validity}
+              availability={reward.availability}
+              userPoints={userPoints}
             />
           ))}
         </Box>

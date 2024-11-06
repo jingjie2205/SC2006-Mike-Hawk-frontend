@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import NavBar from "../../Common/NavBar";
+import axios from "axios";
 import {
   Box,
   Button,
@@ -18,17 +19,40 @@ import {
 } from "@chakra-ui/react";
 
 const ProfilePage = () => {
-  // Initial user data
   const [user, setUser] = useState({
-    username: "John123",
-    email: "John123@gmail.com",
+    userID: "",
+    userName: "",
+    emailAddress: "",
+    loginStatus: true,
+    points: 0,
+    notificationEnabled: true,
+    isAuthority: false,
+    isModerator: false,
   });
 
-  // State for the popover
-  const [newUsername, setNewUsername] = useState(user.username);
-  const [newEmail, setNewEmail] = useState(user.email);
+  const [newUserName, setNewUserName] = useState("");
+  const [newEmailAddress, setNewEmailAddress] = useState("");
   const [feedback, setFeedback] = useState("");
-  const [resetEmail, setResetEmail] = useState(user.email);
+  const [resetEmail, setResetEmail] = useState("");
+
+  const userId = localStorage.getItem("userId"); // Fetch userId from local storage
+  useEffect(() => {
+    // Fetch initial user data from backend
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/users/users/?user_id=${userId}`);
+        if (response.status === 200) {
+          setUser(response.data); // Assuming response contains { userID, userName, emailAddress, ... }
+          setNewUserName(response.data.userName);
+          setNewEmailAddress(response.data.emailAddress);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, [userId]);
 
   const handleUpdate = () => {
     setUser({ username: newUsername, email: newEmail });
@@ -52,14 +76,14 @@ const ProfilePage = () => {
   return (
     <div>
       <NavBar />
-      <Flex bg="#06ADBF" p={4} align="center" width="100%" mt={4}>
-        <Text fontWeight="bold" fontSize="xl" color="white">
-          Hello, John!
+      <Flex bg="#06ADBF" p={4} align="center" width="100%" mt={4} justify="space-between">
+        <Text fontWeight="bold" fontSize="xl" color="white" whiteSpace="nowrap">
+          Hello, {user.userName}!
         </Text>
         <Image
           float="right"
           align="right"
-          margin="2% 0 2% 60%"
+          margin="2% 0 2% 50%"
           boxSize="10%"
           borderRadius="50%"
           src="https://bit.ly/dan-abramov"
@@ -72,16 +96,17 @@ const ProfilePage = () => {
             bg="#F2F2F2"
             p={4}
             borderRadius="md"
-            width={{ base: "90%", md: "70%" }} // Responsive width
+            width={{ base: "90%", md: "70%" }}
             textAlign="left"
             mb={4}
           >
-            <Text fontWeight="bold" color="black" mb={2}>
-              Username: {user.username}
+            <Text fontWeight="bold" color="black" mb="5%">
+              Username: {user.userName}
             </Text>
-            <Text fontWeight="bold" color="black" mb={2}>
-              Email: {user.email}
+            <Text fontWeight="bold" color="black" mb="5%">
+              Email: {user.emailAddress}
             </Text>
+            
             <Popover>
               <PopoverTrigger>
                 <Button
@@ -99,16 +124,16 @@ const ProfilePage = () => {
                 <PopoverBody>
                   <Text mb={2}>New Username:</Text>
                   <Input
-                    value={newUsername}
-                    onChange={(e) => setNewUsername(e.target.value)}
+                    value={newUserName}
+                    onChange={(e) => setNewUserName(e.target.value)}
                     placeholder="Enter new username"
                   />
                   <Text mt={4} mb={2}>
                     New Email:
                   </Text>
                   <Input
-                    value={newEmail}
-                    onChange={(e) => setNewEmail(e.target.value)}
+                    value={newEmailAddress}
+                    onChange={(e) => setNewEmailAddress(e.target.value)}
                     placeholder="Enter new email"
                   />
                 </PopoverBody>
@@ -177,5 +202,6 @@ const ProfilePage = () => {
     </div>
   );
 };
+
 
 export default ProfilePage;

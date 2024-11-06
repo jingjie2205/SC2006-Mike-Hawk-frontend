@@ -1,54 +1,45 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import axios from "axios";
 import NavBar from "../../Common/NavBar";
-import {
-  Box,
-  Text,
-  Input,
-  VStack,
-  IconButton,
-  HStack,
-} from "@chakra-ui/react";
+import { Box, Text, Input, VStack, IconButton, HStack } from "@chakra-ui/react";
 import { FaSearch } from "react-icons/fa";
 import SortBy from "../UserMyReport/SortBy";
 import ReportItem from "../UserMyReport/ReportItem";
 import { useNavigate } from "react-router-dom";
 
-// Sample report data
-const reports = [
-  {
-    id: 1,
-    title: "Spoilt fire alarm at Jurong Point",
-    description: "Spoilt fire alarm at Jurong Point Level B1 near men's toilet",
-    image: "src/Assets/FireAlarm.jpg",
-    isActive: true,
-    Date: "2024-09-03",
-    severity: 5
-  },
-  {
-    id: 2,
-    title: "Pothole at Tampines Street 81",
-    description: "Pothole at Tampines Street 81 beside block 824",
-    image: "src/Assets/pothole.jpg",
-    isActive: false,
-    Date: "2024-08-30",
-    severity: 6
-  },
-  {
-    id: 3,
-    title: "Aircon leak at Sengkang Interchange",
-    description: "Aircon leak at Sengkang Interchange causing puddling, fall hazard",
-    image: "src/Assets/AirconLeakage.webp",
-    isActive: false,
-    Date: "2023-05-10",
-    severity: 3
-  },
-];
-
 function UserMyReport() {
+  const userId = localStorage.getItem("userId");
+
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredReports, setFilteredReports] = useState(reports);
+  const [reports, setReports] = useState([]);
+  const [filteredReports, setFilteredReports] = useState([]);
   const [sortOption, setSortOption] = useState("Newest");
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!userId) {
+      navigate("/login"); // Redirects to login if userId is missing
+      return;
+    }
+
+    const fetchUserReports = async () => {
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/reports/reports/user/${userId}`
+        );
+        if (response.status === 200) {
+          setReports(response.data);
+          setFilteredReports(response.data);
+        }
+      } catch (err) {
+        console.error("Error fetching user reports:", err);
+        setError("Failed to fetch reports. Please try again later.");
+      }
+    };
+
+    fetchUserReports();
+  }, [userId]);
 
   const handleSearch = () => {
     setFilteredReports(
@@ -87,13 +78,19 @@ function UserMyReport() {
     return sortReports;
   }, [filteredReports, sortOption]);
 
-  const openReportDetails = (reportId) => {
-    navigate(`/report/${reportId}`);
+  const openReportDetails = (report) => {
+    navigate(`/report/${report.ReportID}`, { state: { report } });
   };
 
   return (
     <div>
       <NavBar />
+
+      {error && (
+        <Box bg="red.100" p="4" mb="4" borderRadius="md">
+          <Text color="red.700">{error}</Text>
+        </Box>
+      )}
 
       <VStack bg="#06ADBF" align="center" mt="3%">
         <Text fontWeight="1000" mt="3%" mb="3%" fontSize="200%" color="white">
@@ -131,7 +128,7 @@ function UserMyReport() {
           textAlign="right"
           mr="10%"
           onClick={() => {
-            setSearchQuery(""); 
+            setSearchQuery("");
             setFilteredReports(reports);
           }}
           cursor="pointer"
@@ -140,30 +137,49 @@ function UserMyReport() {
         </Text>
       </HStack>
 
-      <Text fontWeight="500" mb="2%" fontSize="250%" align="center" color="black">
+      <Text
+        fontWeight="500"
+        mb="2%"
+        fontSize="250%"
+        align="center"
+        color="black"
+      >
         Active Reports
       </Text>
 
       <VStack bg="white" align="center">
-        {sortedReports.filter((report) => report.isActive).length === 0 ? (
+        {sortedReports.filter((report) => report.status === "In Progress" || report.status === "Pending").length === 0 ? (
           <Box bg="#dddddd" w="80%" margin="3% 0" padding="3%">
             <Text fontWeight={"400"} fontSize={"120%"}>
               No reports found
             </Text>
           </Box>
         ) : (
-          sortedReports
-            .filter((report) => report.isActive)
-            .map((report) => <ReportItem key={report.id} report={report} onClick={() => openReportDetails(report.id)}/>)
+            sortedReports
+              .filter((report) => report.status === "In Progress" || report.status === "Pending")
+              .map((report) => (
+              <ReportItem
+                key={report.report_id}
+                report={report}
+                onClick={() => openReportDetails(report)}
+              />
+            ))
         )}
       </VStack>
 
-      <Text fontWeight="500" mt="1%" mb="2%" fontSize="250%" align="center" color="black">
+      <Text
+        fontWeight="500"
+        mt="1%"
+        mb="2%"
+        fontSize="250%"
+        align="center"
+        color="black"
+      >
         Past Reports
       </Text>
 
       <VStack bg="white" align="center">
-        {sortedReports.filter((report) => !report.isActive).length === 0 ? (
+        {sortedReports.filter((report) => report.status === "Resolved").length === 0 ? (
           <Box bg="#dddddd" w="80%" margin="3% 0" padding="3%">
             <Text fontWeight={"400"} fontSize={"120%"}>
               No reports found
@@ -171,9 +187,14 @@ function UserMyReport() {
           </Box>
         ) : (
           sortedReports
-            .filter((report) => !report.isActive)
-            .map((report) => <ReportItem key={report.id} report={report} onClick={() => openReportDetails(report.id)}
-/>)
+            .filter((report) => report.status === "Resolved")
+            .map((report) => (
+              <ReportItem
+                key={report.report_id}
+                report={report}
+                onClick={() => openReportDetails(report)}
+              />
+            ))
         )}
       </VStack>
     </div>

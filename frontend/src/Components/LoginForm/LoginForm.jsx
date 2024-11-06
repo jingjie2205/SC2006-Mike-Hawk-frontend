@@ -51,6 +51,7 @@ function LoginForm() {
       localStorage.setItem("userId", response.data.user_id);
       localStorage.setItem("isAuthority", response.data.isAuthority);
       localStorage.setItem("isModerator", response.data.isModerator);
+
       // redirect user to dashboard page
       window.location.href = "/userdashboard";
     } catch (error) {

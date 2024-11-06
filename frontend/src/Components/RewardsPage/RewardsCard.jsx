@@ -1,4 +1,5 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import axios from "axios";
 import {
   Box,
   Card,
@@ -29,14 +30,18 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import "./RewardsCard.css";
 
 function RewardsCard({
-  image,
-  name,
-  points,
-  amount,
+  rewardID,
+  description,
+  pointsRequired,
+  validity,
+  availability,
   userPoints,
   isAdmin,
   onUpdate,
 }) {
+  const [image, setImage] = useState(""); // State to store the fetched image URL
+  const userId = localStorage.getItem("userId"); // Fetch userId from local storage
+
   const {
     isOpen: isRedemptionOpen,
     onOpen: onRedemptionOpen,
@@ -51,21 +56,40 @@ function RewardsCard({
   const toast = useToast();
 
   const [editedVoucher, setEditedVoucher] = useState({
-    name: name,
-    points: points,
-    amount: amount,
+    description: description,
+    pointsRequired: pointsRequired,
+    availability: availability,
   });
 
-  const handleRedemption = () => {
-    if (userPoints >= points) {
-      toast({
-        title: "Redemption Successful!",
-        description: `You have redeemed ${name} voucher for ${points} points!`,
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
-      onRedemptionClose();
+  const handleRedemption = async () => {
+    if (userPoints >= pointsRequired) {
+      try {
+        // Deduct points and send the update to the backend
+        const newPoints = userPoints - pointsRequired;
+        const response = await axios.put(`http://127.0.0.1:8000/users/users?user_id=${userId}&points=${newPoints}`);
+  
+        if (response.status === 200) {
+          toast({
+            title: "Redemption Successful!",
+            description: `You have redeemed ${description} for ${pointsRequired} points!`,
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
+          onRedemptionClose();
+        } else {
+          throw new Error("Failed to update points");
+        }
+      } catch (error) {
+        console.error("Error updating points:", error);
+        toast({
+          title: "Redemption Failed",
+          description: "There was an error updating your points. Please try again later.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
     } else {
       toast({
         title: "Insufficient Points",
@@ -74,7 +98,6 @@ function RewardsCard({
         duration: 5000,
         isClosable: true,
       });
-      onRedemptionClose();
     }
   };
 
@@ -87,6 +110,31 @@ function RewardsCard({
     onUpdate(editedVoucher);
     onEditClose();
   };
+
+  useEffect(() => {
+    // Fetch image URL based on rewardId
+    const fetchImage = async () => {
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/rewards/rewards/${description}/image`, {
+            responseType: 'blob'
+          }
+        );
+        // Check if content is an image
+        if (response.headers['content-type'].includes('image/png')) {
+          // Convert blob to an object URL
+          const imageUrl = URL.createObjectURL(response.data);
+          setImage(imageUrl);
+        } else {
+          console.error("Fetched content is not an image");
+        }
+      } catch (error) {
+        console.error("Error fetching image:", error);
+      }
+    };
+
+    fetchImage();
+  }, [rewardID]);
 
   return (
     <>
@@ -106,7 +154,7 @@ function RewardsCard({
           alignItems={"center"}
         >
           <Image
-            src={image}
+            src={image || "default-image-url.png"} // Use a default image if none provided
             width="100px"
             height="90px"
             rounded={3}
@@ -118,9 +166,8 @@ function RewardsCard({
             width={"500px"}
             className="text-container"
           >
-            <Text>{name}</Text>
-            <Text>${amount} evoucher</Text>
-            <Text>{points} points</Text>
+            <Text>{description}</Text>
+            <Text>{pointsRequired} Points</Text>
           </Box>
           {isAdmin && (
             <Popover
@@ -143,28 +190,28 @@ function RewardsCard({
                   <PopoverCloseButton />
                   <Stack spacing={4}>
                     <FormControl>
-                      <FormLabel>Voucher Name</FormLabel>
-                      <Input
-                        name="name"
-                        value={editedVoucher.name}
-                        onChange={handleEditChange}
-                      />
-                    </FormControl>
-                    <FormControl>
                       <FormLabel>Description</FormLabel>
                       <Input
-                        name="amount"
-                        type="number"
-                        value={editedVoucher.amount}
+                        name="description"
+                        value={editedVoucher.description}
                         onChange={handleEditChange}
                       />
                     </FormControl>
                     <FormControl>
                       <FormLabel>Points Required</FormLabel>
                       <Input
-                        name="points"
+                        name="pointsRequired"
                         type="number"
-                        value={editedVoucher.points}
+                        value={editedVoucher.pointsRequired}
+                        onChange={handleEditChange}
+                      />
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel>Availability</FormLabel>
+                      <Input
+                        name="availability"
+                        type="number"
+                        value={editedVoucher.availability}
                         onChange={handleEditChange}
                       />
                     </FormControl>
@@ -189,11 +236,10 @@ function RewardsCard({
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
               Confirm Redemption
             </AlertDialogHeader>
-
             <AlertDialogBody>
-              Are you sure you want to redeem this reward for {points} points?
+              Are you sure you want to redeem this reward for {pointsRequired}{" "}
+              points?
             </AlertDialogBody>
-
             <AlertDialogFooter>
               <Button ref={cancelRef} onClick={onRedemptionClose}>
                 No

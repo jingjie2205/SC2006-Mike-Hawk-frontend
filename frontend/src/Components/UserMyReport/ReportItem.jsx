@@ -2,10 +2,12 @@ import React from "react";
 import { Box, Text, Image } from "@chakra-ui/react";
 
 function ReportItem({ report, onClick }) {
+  console.log(report.image_path);
+
   return (
     <Box
       onClick={onClick}
-      key={report.id}
+      key={report.report_id}
       bg="#dddddd"
       alignItems="center"
       w="80%"
@@ -17,14 +19,14 @@ function ReportItem({ report, onClick }) {
         mr="3%"
         boxSize="30%"
         float="left"
-        src={report.image}
+        src={report.image_path}
         alt="Report"
       />
       <Text align="left" fontWeight="500" fontSize="150%" color="black">
         {report.title}
       </Text>
       <Text align="left" fontWeight="500" fontSize="80%" color="black">
-        Date: {report.Date}
+        Date: {report.datetime}
       </Text>
       <Text
         mt="5%"

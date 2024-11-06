@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Box, Text, VStack, Image, Button, Input } from "@chakra-ui/react";
 import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
 import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
@@ -50,61 +50,70 @@ function SearchControl({ provider }) {
 }
 
 function ReportDetail() {
-    const isUserAuthority = true; // Set to true if the user has authority
-    const { id } = useParams();
-  const report = reports.find((r) => r.id === parseInt(id));
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isUserAuthority = localStorage.getItem("isAuthority") === "true";
+  
+  // Get the report data passed from the previous page
+  const report = location.state?.report;
   const provider = new OpenStreetMapProvider();
+
+  if (!report) {
+    navigate("/user-reports");
+    return null;
+  }
+
+  // Extract latitude and longitude from report.location
+  const [latitude, longitude] = report.location
+    .split(",")
+    .map((coord) => parseFloat(coord.trim()));
 
   return (
     <div>
-        <NavBar/>
-        <Box p={6}>
-        {report ? (
-            <VStack align="start" spacing={5}>
-            {/* Display main image */}
+      <NavBar />
+      <Box p={6}>
+        <VStack align="start" spacing={5}>
+          {/* Display main image */}
+          <Box w="100%">
+            <Text fontWeight="bold" mb={2}>Picture:</Text>
+            <Image src={report.image_path} alt="Report Image" borderRadius="md" />
+          </Box>
+
+          {/* Display report details */}
+          <Box w="100%" bg="#E2E8F0" p={4} borderRadius="md">
+            <Text fontWeight="bold" mb={2}>Details of the issue:</Text>
+            <Text>{report.description}</Text>
+          </Box>
+
+          {/* Display location map with Leaflet */}
+          <Box w="100%" h="300px" mb="3%">
+            <Text fontWeight="bold" mb={2}>Location:</Text>
+            <MapContainer center={[latitude, longitude]} zoom={13} style={{ height: "100%", width: "100%" }}>
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              />
+              <Marker position={[latitude, longitude]} />
+              <SearchControl provider={provider} />
+            </MapContainer>
+          </Box>
+
+          {/* Display date and time */}
+          <Box w="100%" bg="#E2E8F0" p={3} borderRadius="md" mt="5%">
+            <Text fontWeight="bold">Time:</Text>
+            <Text fontSize="lg" fontWeight="medium">{report.datetime}</Text>
+          </Box>
+
+          {/* Conditionally render post section based on user authority */}
+          {isUserAuthority && (
             <Box w="100%">
-                <Text fontWeight="bold" mb={2}>Picture:</Text>
-                <Image src={report.image} alt="Report Image" borderRadius="md" />
+              <Input placeholder="Make an announcement" mb={3} />
+              <ImageUpload />
+              <Button colorScheme="blue">POST</Button>
             </Box>
-
-            {/* Display report details */}
-            <Box w="100%" bg="#E2E8F0" p={4} borderRadius="md">
-                <Text fontWeight="bold" mb={2}>Details of the issue:</Text>
-                <Text>{report.description}</Text>
-            </Box>
-
-            {/* Display location map with Leaflet */}
-            <Box w="100%" h="300px" mb="3%">
-                <Text fontWeight="bold" mb={2}>Location:</Text>
-                <MapContainer center={[report.location.lat, report.location.lng]} zoom={13} style={{ height: "100%", width: "100%" }}>
-                <TileLayer
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                />
-                <Marker position={[report.location.lat, report.location.lng]} />
-                <SearchControl provider={provider} />
-                </MapContainer>
-            </Box>
-
-            {/* Display date and time */}
-            <Box w="100%" bg="#E2E8F0" p={3} borderRadius="md" mt="5%">
-                <Text fontWeight="bold">Time:</Text>
-                <Text fontSize="lg" fontWeight="medium">{report.date}</Text>
-            </Box>
-
-            {/* Conditionally render post section based on user authority */}
-            {isUserAuthority && (
-              <Box w="100%">
-                <Input placeholder="Make an announcement" mb={3} />
-                <ImageUpload/>
-                <Button colorScheme="blue">POST</Button>
-              </Box>
-            )}
-            </VStack>
-        ) : (
-            <Text>Report not found</Text>
-        )}
-        </Box>
+          )}
+        </VStack>
+      </Box>
     </div>
   );
 }
