@@ -41,6 +41,8 @@ function AdminManageUser() {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm); 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [isDeleteConfirm, setIsDeleteConfirm] = useState(false); // State to track delete confirmation
+
 
   // Function to fetch users from backend
   useEffect(() => {
@@ -81,6 +83,7 @@ function AdminManageUser() {
 
   // Open modal to edit selected user
   const openModal = (user) => {
+    console.log("Opening modal for user:", user); // Check the user object here
     setSelectedUser({ ...user });
     setIsModalOpen(true);
   };
@@ -105,6 +108,32 @@ function AdminManageUser() {
       )
     );
     closeModal();
+  };
+   // Delete user with confirmation
+   const handleDeleteClick = () => {
+    setIsDeleteConfirm(true); // Show the second confirmation step
+  };
+
+  // Delete user
+  const handleDelete = async () => {
+    try {
+      // Send DELETE request to backend
+      const response = await axios.delete(`http://127.0.0.1:8000/users/users/?user_id=${selectedUser?.userID}`);
+  
+      if (response.status === 200) {
+        // Successfully deleted, now update the local state to remove the user
+        setUsers((prevUsers) => prevUsers.filter((user) => user.id !== selectedUser?.userID));
+        closeModal();  // Close the modal after deletion
+        window.location.reload()
+      }
+      else {
+        console.error("Failed to delete user: ", response);
+        alert("Failed to delete user.");
+      }
+    } catch (error) {
+      console.error("Error deleting user", error);
+      // Optionally, you can show a toast message or alert here
+    }
   };
 
   return (
@@ -193,6 +222,17 @@ function AdminManageUser() {
             <Button colorScheme="blue" mr={3} onClick={handleSaveChanges}>
               Save
             </Button>
+            {!isDeleteConfirm ? (
+              <Button colorScheme="red" mr={3} onClick={handleDeleteClick}>
+                Delete
+              </Button>
+            ) : (
+              <>
+                <Button colorScheme="red" mr={3} onClick={handleDelete}>
+                  Confirm Delete
+                </Button>
+              </>
+            )}
             <Button variant="ghost" onClick={closeModal}>
               Cancel
             </Button>

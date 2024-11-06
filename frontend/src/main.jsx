@@ -12,7 +12,7 @@ import UserMyReport from "./Components/UserMyReport/UserMyReport.jsx";
 import UserDashboard from "./Components/UserDashboard/UserDashboard.jsx";
 import AdminManagementPage from "./Components/AdminManagementPage/AdminManagementPage.jsx";
 import { QueryClient, QueryClientProvider } from "react-query";
-import AdminDashboardPage from "./Components/AdminDashboard/AdminDashboardPage.jsx";
+import MyRewardsPage from "./Components/RewardsPage/MyRewardsPage.jsx";
 import AuthorityMyReport from "./Components/AuthorityMyReport/AuthorityMyReport.jsx";
 import ReportDetail from "./Components/UserMyReport/ReportDetail";
 
@@ -23,10 +23,10 @@ const router = createBrowserRouter([
   { path: "/makereport", element: <MakeReport /> },
   { path: "/profile", element: <ProfilePage /> },
   { path: "/rewards", element: <RewardsPage /> },
+  { path: "/myrewards", element: <MyRewardsPage /> },
   { path: "/myreports", element: <UserMyReport /> },
   { path: "/report/:id", element: <ReportDetail /> },
   { path: "/userdashboard", element: <UserDashboard /> },
-  { path: "/adminmanagement", element: <AdminManagementPage /> },
   { path: "/authoritymyreports", element: <AuthorityMyReport /> },
   { path: "/moderatordashboard", element: <AdminManagementPage />},
 ]);
