@@ -34,8 +34,10 @@ const ProfilePage = () => {
   const [newEmailAddress, setNewEmailAddress] = useState("");
   const [feedback, setFeedback] = useState("");
   const [resetEmail, setResetEmail] = useState("");
+  const [image, setImage] = useState(""); // State to store the fetched image URL
 
   const userId = localStorage.getItem("userId"); // Fetch userId from local storage
+  
   useEffect(() => {
     // Fetch initial user data from backend
     const fetchUserData = async () => {
@@ -52,6 +54,31 @@ const ProfilePage = () => {
     };
 
     fetchUserData();
+  }, [userId]);
+
+  useEffect(() => {
+    // Fetch image URL based on userId
+    const fetchImage = async () => {
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/users/users/profilePicture/${userId}`, {
+            responseType: 'blob'
+          }
+        );
+        // Check if content is an image
+        if (response.headers['content-type'].includes('image/png')) {
+          // Convert blob to an object URL
+          const imageUrl = URL.createObjectURL(response.data);
+          setImage(imageUrl);
+        } else {
+          console.error("Fetched content is not an image");
+        }
+      } catch (error) {
+        console.error("Error fetching image:", error);
+      }
+    };
+
+    fetchImage();
   }, [userId]);
 
   const handleUpdate = () => {
@@ -83,10 +110,10 @@ const ProfilePage = () => {
         <Image
           float="right"
           align="right"
-          margin="2% 0 2% 50%"
-          boxSize="10%"
+          margin="2% 0 2% 40%"
+          boxSize="15%"
           borderRadius="50%"
-          src="https://bit.ly/dan-abramov"
+          src={image || "https://bit.ly/dan-abramov"}
           alt="Profile Picture"
         />
       </Flex>
