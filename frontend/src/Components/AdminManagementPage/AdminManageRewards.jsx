@@ -1,4 +1,5 @@
-import { React, useState, useRef } from "react";
+import { React, useState, useEffect } from "react";
+import axios from "axios";
 import {
   Button,
   Popover,
@@ -23,19 +24,27 @@ function AdminManageRewards() {
     amount: "",
   });
   const { onOpen, onClose, isOpen } = useDisclosure();
+  const [vouchers, setVouchers] = useState([]);
 
-  {
-    /* HARD CODED FOR TESTING */
-  }
-  const [vouchers, setVouchers] = useState([
-    { image: "../../public/macs.png", name: "Macs", points: 100, amount: 10 },
-    {
-      image: "../../public/fairprice.png",
-      name: "FairPrice",
-      points: 150,
-      amount: 10,
-    },
-  ]);
+  // Fetch vouchers from the backend
+  useEffect(() => {
+    const fetchVouchers = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/rewards/rewards/all");
+        console.log(response); // Check if the response is coming back correctly
+        if (response.status === 200) {
+          const sortedVouchers = response.data.sort((a, b) =>
+            a.description.localeCompare(b.description)
+          );
+          setVouchers(sortedVouchers);
+        }
+      } catch (error) {
+        console.error("Error fetching vouchers:", error);
+      }
+    };
+
+    fetchVouchers();
+  }, []);
 
   // Handle form input changes
   const handleInputChange = (e) => {
@@ -123,17 +132,16 @@ function AdminManageRewards() {
         gap="20px"
         padding="20px"
       >
-        {/* HARD CODED FOR TESTING */}
-        {vouchers.map((reward, index) => (
+        {vouchers.map((reward) => (
           <RewardsCard
-            key={index}
-            image={reward.image}
-            name={reward.name}
-            points={reward.points}
-            amount={reward.amount}
+            key={reward.rewardID}  // Ensure each voucher has a unique ID
+            rewardID={reward.rewardID}
+            description={reward.description}
+            pointsRequired={reward.pointsRequired}
+            validity={reward.validity}
             isAdmin={true}
-            onUpdate={(updatedVoucher) => updateVoucher(index, updatedVoucher)}
-          />
+            availability={reward.availability}
+        />
         ))}
       </div>
     </div>

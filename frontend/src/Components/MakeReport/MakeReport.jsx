@@ -6,7 +6,7 @@ import "react-datetime-picker/dist/DateTimePicker.css";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
 import DateTimePicker from "react-datetime-picker";
-import { Textarea, Box, Button } from "@chakra-ui/react";
+import { Textarea, Box, Button, VStack, Text } from "@chakra-ui/react";
 import NavBar from "../../Common/NavBar";
 import axios from "axios";
 
@@ -52,6 +52,11 @@ function MakeReport() {
   return (
     <div>
       <NavBar />
+      <VStack bg="#06ADBF" align="center" mt="3%">
+        <Text fontWeight="1000" mt="3%" mb="3%" fontSize="200%" color="white">
+          Make Report
+        </Text>
+      </VStack>
       <Box
         borderWidth="1px"
         borderRadius="lg"

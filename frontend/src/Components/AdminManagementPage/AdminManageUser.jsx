@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Box,
   Text,
@@ -28,18 +29,36 @@ import {
 import { FaSearch } from "react-icons/fa";
 
 function AdminManageUser() {
-  const [users, setUsers] = useState([
-    { id: 1, username: "Aaron", email: "aaron@example.com" },
-    { id: 2, username: "Allen", email: "allen@example.com" },
-    { id: 3, username: "David", email: "david@example.com" },
-    { id: 4, username: "Anna", email: "anna@example.com" },
-    { id: 5, username: "Amanda", email: "amanda@example.com" }
-  ]);
-  
+  // const [users, setUsers] = useState([
+  //   { id: 1, username: "Aaron", email: "aaron@example.com" },
+  //   { id: 2, username: "Allen", email: "allen@example.com" },
+  //   { id: 3, username: "David", email: "david@example.com" },
+  //   { id: 4, username: "Anna", email: "anna@example.com" },
+  //   { id: 5, username: "Amanda", email: "amanda@example.com" }
+  // ]);
+  const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState(""); 
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm); 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+
+  // Function to fetch users from backend
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/users/users/all"); // Backend endpoint for users
+  
+        if (response.status === 200) {
+          console.log(response.data)
+          setUsers(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching users", error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   // Function to handle search input changes
   const handleSearchChange = (e) => {
@@ -57,7 +76,7 @@ function AdminManageUser() {
 
   // Filter users based on the search term (case insensitive)
   const filteredUsers = users.filter((user) =>
-    user.username.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+    user.userName.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
   );
 
   // Open modal to edit selected user
@@ -90,12 +109,6 @@ function AdminManageUser() {
 
   return (
     <div>
-      <VStack bg="#06ADBF" align="center" mt="3%">
-        <Text fontWeight="1000" mt="3%" mb="3%" fontSize="200%" color="white">
-          Admin Dashboard
-        </Text>
-      </VStack>
-
       <HStack alignItems="center" mt="3%">
         <IconButton
           aria-label="Search"
@@ -106,7 +119,7 @@ function AdminManageUser() {
           padding="5%"
         />
         <Input
-          placeholder="Search For User"
+          placeholder="Search for User by Username"
           height={45}
           borderRadius={25}
           backgroundColor="#D3D3D3"
@@ -131,12 +144,18 @@ function AdminManageUser() {
 
       <TableContainer>
         <Table variant="simple">
+        <Thead>
+          <Tr>
+            <Th>User Name</Th>
+            <Th>Email Address</Th>
+          </Tr>
+        </Thead>
           <Tbody>
             {filteredUsers.length > 0 ? (
               filteredUsers.map((user) => (
                 <Tr key={user.id} onClick={() => openModal(user)} _hover={{ bg: "gray.100", cursor: "pointer" }}>
-                  <Td>{user.id}</Td>
-                  <Td>{user.username}</Td>
+                  <Td>{user.userName}</Td>
+                  <Td>{user.emailAddress}</Td>
                 </Tr>
               ))
             ) : (
@@ -154,7 +173,7 @@ function AdminManageUser() {
           <ModalHeader>Edit User</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Text mb="8px">Username:</Text>
+            <Text mb="8px">Current Username: {selectedUser?.userName}</Text>
             <Input
               name="username"
               value={selectedUser?.username || ""}
@@ -162,7 +181,7 @@ function AdminManageUser() {
               placeholder="Enter new username"
               mb={4}
             />
-            <Text mb="8px">Email:</Text>
+            <Text mb="8px">Current Email: {selectedUser?.emailAddress}</Text>
             <Input
               name="email"
               value={selectedUser?.email || ""}

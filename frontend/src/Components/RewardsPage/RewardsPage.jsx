@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import NavBar from "../../Common/NavBar";
 import RewardsCard from "./RewardsCard";
-import { Box, Text, Stat, StatLabel, StatNumber } from "@chakra-ui/react";
+import { Box, Text, Stat, StatLabel, StatNumber, VStack } from "@chakra-ui/react";
 
 function RewardsPage() {
   const [rewards, setRewards] = useState([]);
@@ -51,7 +51,12 @@ function RewardsPage() {
   return (
     <div>
       <NavBar />
-      <Box borderRadius="lg" p="4" maxW="1100px" mx="auto" mt="20px" bg="white">
+      <VStack bg="#06ADBF" align="center" mt="3%">
+        <Text fontWeight="1000" mt="3%" mb="3%" fontSize="200%" color="white">
+          Rewards
+        </Text>
+      </VStack>
+      <Box borderRadius="lg" p="4" maxW="1100px" mx="auto" bg="white">
         <Box
           borderWidth="2px"
           borderRadius="lg"
@@ -84,6 +89,7 @@ function RewardsPage() {
               pointsRequired={reward.pointsRequired}
               validity={reward.validity}
               availability={reward.availability}
+              isAdmin={false}
               userPoints={userPoints}
             />
           ))}

@@ -42,6 +42,7 @@ function RewardsCard({
   const [image, setImage] = useState(""); // State to store the fetched image URL
   const userId = localStorage.getItem("userId"); // Fetch userId from local storage
 
+
   const {
     isOpen: isRedemptionOpen,
     onOpen: onRedemptionOpen,
@@ -77,6 +78,10 @@ function RewardsCard({
             isClosable: true,
           });
           onRedemptionClose();
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+
         } else {
           throw new Error("Failed to update points");
         }
@@ -91,6 +96,7 @@ function RewardsCard({
         });
       }
     } else {
+      onRedemptionClose();
       toast({
         title: "Insufficient Points",
         description: "You do not have enough points to redeem this reward!",
@@ -107,6 +113,11 @@ function RewardsCard({
   };
 
   const handleUpdate = () => {
+    onUpdate(editedVoucher);
+    onEditClose();
+  };
+
+  const handleDelete = () => {
     onUpdate(editedVoucher);
     onEditClose();
   };
@@ -217,6 +228,9 @@ function RewardsCard({
                     </FormControl>
                     <Button colorScheme="teal" onClick={handleUpdate}>
                       Update
+                    </Button>
+                    <Button colorScheme="red" onClick={handleDelete}>
+                      Delete
                     </Button>
                   </Stack>
                 </FocusLock>

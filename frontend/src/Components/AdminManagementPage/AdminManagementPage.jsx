@@ -2,13 +2,14 @@ import React from "react";
 import {
   Tabs,
   Tab,
+  Text,
   TabList,
   TabPanels,
   TabPanel,
   Box,
   Button,
+  VStack
 } from "@chakra-ui/react";
-import NavBar from "../../Common/NavBar";
 import RewardsCard from "../RewardsPage/RewardsCard";
 import AdminManageRewards from "./AdminManageRewards";
 import AdminManageUser from "./AdminManageUser";
@@ -16,7 +17,11 @@ import AdminManageUser from "./AdminManageUser";
 function AdminManagementPage() {
   return (
     <div>
-      <NavBar />
+      <VStack bg="#06ADBF" align="center" mt="3%" width="100%" > 
+        <Text fontWeight="1000" mt="3%" mb="3%" fontSize="200%" color="white">
+          Admin Dashboard
+        </Text>
+      </VStack>
       <Box
         borderWidth="1px"
         borderRadius="lg"

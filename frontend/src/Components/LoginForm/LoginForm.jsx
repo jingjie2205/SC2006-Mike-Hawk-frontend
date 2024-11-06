@@ -46,14 +46,20 @@ function LoginForm() {
           password: pw,
         }
       );
-      console.log(response);
+
       localStorage.setItem("authToken", response.data.token);
       localStorage.setItem("userId", response.data.user_id);
       localStorage.setItem("isAuthority", response.data.isAuthority);
       localStorage.setItem("isModerator", response.data.isModerator);
 
-      // redirect user to dashboard page
-      window.location.href = "/userdashboard";
+      // Conditional redirect based on the user's role
+      if (response.data.isAuthority) {
+        window.location.href = "/authoritydashboard"; // Redirect to authority dashboard
+      } else if (response.data.isModerator) {
+        window.location.href = "/moderatordashboard"; // Redirect to moderator dashboard
+      } else {
+        window.location.href = "/userdashboard"; // Redirect to user dashboard
+      }
     } catch (error) {
       console.log(error);
     }

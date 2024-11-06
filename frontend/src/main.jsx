@@ -28,7 +28,7 @@ const router = createBrowserRouter([
   { path: "/userdashboard", element: <UserDashboard /> },
   { path: "/adminmanagement", element: <AdminManagementPage /> },
   { path: "/authoritymyreports", element: <AuthorityMyReport /> },
-
+  { path: "/moderatordashboard", element: <AdminManagementPage />},
 ]);
 
 const queryClient = new QueryClient();
