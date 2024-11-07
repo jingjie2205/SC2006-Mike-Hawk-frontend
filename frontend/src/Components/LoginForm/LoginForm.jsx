@@ -2,8 +2,8 @@ import { React, useState } from "react";
 import { FaUser, FaLock } from "react-icons/fa";
 import "./LoginForm.css";
 import { Link as RouterLink } from "react-router-dom";
-import { useQuery } from "react-query";
 import axios from "axios";
+import { Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton } from '@chakra-ui/react';
 
 import {
   Box,
@@ -25,10 +25,8 @@ function LoginForm() {
   // states for login input boxes
   const [name, setUsername] = useState("");
   const [pw, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null); // State to store error message
 
-  {
-    /* update states when input boxes are changed */
-  }
   const handleUsername = (e) => {
     setUsername(e.target.value);
   };
@@ -46,6 +44,13 @@ function LoginForm() {
           password: pw,
         }
       );
+      if (response.status === 200) {
+        // Handle successful login (response.data contains the response)
+        console.log("Login successful", response.data);
+      } else {
+        // Handle unexpected status code
+        console.log("Unexpected response code:", response.status);
+      }
 
       localStorage.setItem("authToken", response.data.token);
       localStorage.setItem("userId", response.data.user_id);
@@ -54,19 +59,34 @@ function LoginForm() {
 
       // Conditional redirect based on the user's role
       if (response.data.isAuthority) {
-        window.location.href = "/authoritydashboard"; // Redirect to authority dashboard
+        window.location.href = "/userdashboard"; // Redirect to authority dashboard
       } else if (response.data.isModerator) {
         window.location.href = "/moderatordashboard"; // Redirect to moderator dashboard
       } else {
         window.location.href = "/userdashboard"; // Redirect to user dashboard
       }
     } catch (error) {
-      console.log(error);
+      if (error.response) {
+        // Handle error based on the server's response
+        if (error.response.status != 200) {
+          setErrorMessage("Incorrect username or password");
+        } else {
+          setErrorMessage(`Error: ${error.response.status} - ${error.response.statusText}`);
+        }
+      } else if (error.request) {
+        // The request was made but no response was received
+        setErrorMessage("No response from the server.");
+      } else {
+        // Something else happened while setting up the request
+        setErrorMessage("Error setting up the request: " + error.message);
+      }
     }
   };
 
   return (
     <div>
+      
+
       <Box
         w={["full", "md"]}
         p={[8, 10]}
@@ -79,6 +99,15 @@ function LoginForm() {
         bg="white"
       >
         <Image src="./public/RQ.png" alt="ReportQuest Logo" rounded={10} />
+        {/* Error message box */}
+        {errorMessage && (
+        <Alert status="error" mt={2}>
+          <AlertIcon />
+          <AlertTitle mr={2}>Error</AlertTitle>
+          <AlertDescription>{errorMessage}</AlertDescription>
+          <CloseButton position="absolute" right="8px" top="8px" onClick={() => setErrorMessage(null)} />
+        </Alert>
+        )}
         <FormControl>
           <FormLabel htmlFor="Username">Username</FormLabel>
           <div class="wrapper">

@@ -147,7 +147,7 @@ const RegisterForm = () => {
             {emptyError && <MessageBox type="error">Please fill all fields</MessageBox>}
             {passwordError && <MessageBox type="error">Passwords do not match</MessageBox>}
             {duplicateEntryError && <MessageBox type="error">Username/Email used</MessageBox>}
-            {invalidEmail && <MessageBox type="error">Invalid email format</MessageBox>}
+            {invalidEmail && <MessageBox type="error">Invalid email format: xxx@example.com</MessageBox>}
             {submitted && <MessageBox type="success">Successfully Registered</MessageBox>}
           </div>
 

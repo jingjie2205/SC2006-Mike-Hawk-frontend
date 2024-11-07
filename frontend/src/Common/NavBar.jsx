@@ -22,6 +22,8 @@ import { MdManageSearch } from "react-icons/md";
 import { TbAlertSquare } from "react-icons/tb";
 
 function NavBar() {
+  const isAuthority = parseInt(localStorage.getItem("isAuthority"), 10); // Fetch isAuthority from local storage
+
   return (
     <Box
       bg="gray.800"
@@ -41,7 +43,8 @@ function NavBar() {
             height="50"
             rounded="50%"
             ml="5%"
-            mr="5%"/>
+            mr="5%"
+          />
           {/* Navigation Links */}
           <HStack as="nav" spacing="5%">
             <Tooltip label="Dashboard">
@@ -49,33 +52,34 @@ function NavBar() {
                 <IoHomeOutline size={30} color="white" />
               </Link>
             </Tooltip>
-            <Tooltip label="Make Report">
-              <Link as={RouterLink} to="/makereport">
-                <GoReport size={30} color="white" />
-              </Link>
-            </Tooltip>
-            <Tooltip label="Rewards">
-              <Link as={RouterLink} to="/rewards">
-                <IoGiftOutline size={30} color="white" />
-              </Link>
-            </Tooltip>
-            <Tooltip label="My Reports" >
+            
+            {isAuthority === 0 && (
+              <>
+                <Tooltip label="Make Report">
+                  <Link as={RouterLink} to="/makereport">
+                    <GoReport size={30} color="white" />
+                  </Link>
+                </Tooltip>
+
+                <Tooltip label="Rewards">
+                  <Link as={RouterLink} to="/rewards">
+                    <IoGiftOutline size={30} color="white" />
+                  </Link>
+                </Tooltip>
+              </>
+            )}
+
+            <Tooltip label="My Reports">
               <Link as={RouterLink} to="/myreports">
                 <IoFileTrayFullOutline size={30} color="white" />
               </Link>
             </Tooltip>
-            <Tooltip label="Authority">
-              <Link as={RouterLink} to="/authoritymyreports">
-                <TbAlertSquare size={30} color="white" />
-              </Link>
-            </Tooltip>
             <Tooltip label="Profile">
               <Link as={RouterLink} to="/profile">
-                <FaUserCircle size={30} color="white"/>
+                <FaUserCircle size={30} color="white" />
               </Link>
             </Tooltip>
           </HStack>
-
         </HStack>
       </Flex>
     </Box>
