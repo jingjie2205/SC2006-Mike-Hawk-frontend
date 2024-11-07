@@ -17,7 +17,7 @@ import AuthorityMyReport from "./Components/AuthorityMyReport/AuthorityMyReport.
 import ReportDetail from "./Components/UserMyReport/ReportDetail";
 
 const router = createBrowserRouter([
-  { path: "/", element: <UserDashboard /> },
+  { path: "/", element: <App /> },
   { path: "/login", element: <App /> },
   { path: "/register", element: <RegisterForm /> },
   { path: "/makereport", element: <MakeReport /> },

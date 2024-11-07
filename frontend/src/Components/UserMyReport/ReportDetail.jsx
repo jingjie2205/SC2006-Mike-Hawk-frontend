@@ -1,32 +1,11 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Box, Text, VStack, Image, Button, Input } from "@chakra-ui/react";
 import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
 import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
 import NavBar from "../../Common/NavBar";
 import ImageUpload from "../MakeReport/ImageUpload";
-
-const reports = [
-  {
-    id: 1,
-    title: "Spoilt fire alarm at Jurong Point",
-    description: "The fire alarm is broken near the men's toilet at Level B1.",
-    image: "src/Assets/FireAlarm.jpg",
-    location: { lat: 1.3521, lng: 103.8198 }, // Sample coordinates
-    date: "2024-09-03 13:32",
-    severity: 5,
-  },
-  {
-    id: 2,
-    title: "Pothole at Tampines Street 81",
-    description: "The road surface is uneven with noticeable bumps and potholes, potentially hazardous.",
-    image: "src/Assets/pothole.jpg",
-    location: { lat: 1.3465, lng: 103.944 },
-    date: "2023-08-20 13:32",
-    severity: 4,
-  },
-  // ...other reports
-];
 
 // Component to add GeoSearchControl to the map
 function SearchControl({ provider }) {
@@ -35,7 +14,7 @@ function SearchControl({ provider }) {
   useEffect(() => {
     const searchControl = new GeoSearchControl({
       provider,
-      style: 'button',
+      style: "button",
       showMarker: true,
       retainZoomLevel: false,
       animateZoom: true,
@@ -53,10 +32,15 @@ function ReportDetail() {
   const location = useLocation();
   const navigate = useNavigate();
   const isUserAuthority = localStorage.getItem("isAuthority") === "true";
-  
+
   // Get the report data passed from the previous page
   const report = location.state?.report;
   const provider = new OpenStreetMapProvider();
+
+  const reportID = report.report_id;
+  const [image, setImage] = useState(""); // State to store the fetched image URL
+  const dateTime = new Date(report.datetime * 1000); // Multiply by 1000 to convert seconds to milliseconds
+  const formattedDate = dateTime.toLocaleString(); // Default locale and time format
 
   if (!report) {
     navigate("/user-reports");
@@ -68,6 +52,32 @@ function ReportDetail() {
     .split(",")
     .map((coord) => parseFloat(coord.trim()));
 
+  useEffect(() => {
+    // Fetch image URL based on reportId
+    const fetchImage = async () => {
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/reports/reports/reportPicture/${reportID}`,
+          {
+            responseType: "blob",
+          }
+        );
+        // Check if content is an image
+        if (response.headers["content-type"].includes("image/png")) {
+          // Convert blob to an object URL
+          const imageUrl = URL.createObjectURL(response.data);
+          setImage(imageUrl);
+        } else {
+          console.error("Fetched content is not an image");
+        }
+      } catch (error) {
+        console.error("Error fetching image:", error);
+      }
+    };
+
+    fetchImage();
+  }, [reportID]);
+
   return (
     <div>
       <NavBar />
@@ -75,20 +85,34 @@ function ReportDetail() {
         <VStack align="start" spacing={5}>
           {/* Display main image */}
           <Box w="100%">
-            <Text fontWeight="bold" mb={2}>Picture:</Text>
-            <Image src={report.image_path} alt="Report Image" borderRadius="md" />
+            <Text fontWeight="bold" mb={2}>
+              Picture:
+            </Text>
+            <Image
+              src={image}
+              alt="Report Image"
+              borderRadius="md"
+            />
           </Box>
 
           {/* Display report details */}
           <Box w="100%" bg="#E2E8F0" p={4} borderRadius="md">
-            <Text fontWeight="bold" mb={2}>Details of the issue:</Text>
+            <Text fontWeight="bold" mb={2}>
+              Details of the issue:
+            </Text>
             <Text>{report.description}</Text>
           </Box>
 
           {/* Display location map with Leaflet */}
           <Box w="100%" h="300px" mb="3%">
-            <Text fontWeight="bold" mb={2}>Location:</Text>
-            <MapContainer center={[latitude, longitude]} zoom={13} style={{ height: "100%", width: "100%" }}>
+            <Text fontWeight="bold" mb={2}>
+              Location:
+            </Text>
+            <MapContainer
+              center={[latitude, longitude]}
+              zoom={13}
+              style={{ height: "100%", width: "100%" }}
+            >
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -101,7 +125,9 @@ function ReportDetail() {
           {/* Display date and time */}
           <Box w="100%" bg="#E2E8F0" p={3} borderRadius="md" mt="5%">
             <Text fontWeight="bold">Time:</Text>
-            <Text fontSize="lg" fontWeight="medium">{report.datetime}</Text>
+            <Text fontSize="lg" fontWeight="medium">
+              {formattedDate}
+            </Text>
           </Box>
 
           {/* Conditionally render post section based on user authority */}

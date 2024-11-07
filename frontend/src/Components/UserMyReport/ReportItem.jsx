@@ -1,10 +1,39 @@
-import React from "react";
+import React, { useEffect, useState }from "react";
+import axios from "axios";
 import { Box, Text, Image } from "@chakra-ui/react";
 
 function ReportItem({ report, onClick }) {
-  console.log(report.image_path);
+  const reportID = report.report_id;
+  const [image, setImage] = useState(""); // State to store the fetched image URL
+  const dateTime = new Date(report.datetime * 1000); // Multiply by 1000 to convert seconds to milliseconds
+  const formattedDate = dateTime.toLocaleString(); // Default locale and time format
 
-  return (
+  useEffect(() => {
+    // Fetch image URL based on reportId
+    const fetchImage = async () => {
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/reports/reports/reportPicture/${reportID}`, {
+            responseType: 'blob'
+          }
+        );
+        // Check if content is an image
+        if (response.headers['content-type'].includes('image/png')) {
+          // Convert blob to an object URL
+          const imageUrl = URL.createObjectURL(response.data);
+          setImage(imageUrl);
+        } else {
+          console.error("Fetched content is not an image");
+        }
+      } catch (error) {
+        console.error("Error fetching image:", error);
+      }
+    };
+
+    fetchImage();
+  }, [reportID]);
+  
+  return (  
     <Box
       onClick={onClick}
       key={report.report_id}
@@ -19,14 +48,14 @@ function ReportItem({ report, onClick }) {
         mr="3%"
         boxSize="30%"
         float="left"
-        src={report.image_path}
+        src={image}
         alt="Report"
       />
-      <Text align="left" fontWeight="500" fontSize="150%" color="black">
+      <Text align="left" fontSize="100%" fontWeight="bold" color="black">
         {report.title}
       </Text>
-      <Text align="left" fontWeight="500" fontSize="80%" color="black">
-        Date: {report.datetime}
+      <Text align="left" fontSize="80%" color="black">
+        Time: {formattedDate}
       </Text>
       <Text
         mt="5%"
