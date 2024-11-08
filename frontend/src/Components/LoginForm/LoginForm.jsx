@@ -16,11 +16,6 @@ import {
   border,
 } from "@chakra-ui/react";
 
-const retrieveLogin = async () => {
-  const response = await axios.get("http://127.0.0.1:8000/public/public/login");
-  return response.data;
-};
-
 function LoginForm() {
   // states for login input boxes
   const [name, setUsername] = useState("");
@@ -69,7 +64,7 @@ function LoginForm() {
       if (error.response) {
         // Handle error based on the server's response
         if (error.response.status != 200) {
-          setErrorMessage("Incorrect username or password");
+          setErrorMessage("Invalid Credentials");
         } else {
           setErrorMessage(`Error: ${error.response.status} - ${error.response.statusText}`);
         }

@@ -18,8 +18,6 @@ import {
   IoFileTrayFullOutline,
 } from "react-icons/io5";
 import { GoReport } from "react-icons/go";
-import { MdManageSearch } from "react-icons/md";
-import { TbAlertSquare } from "react-icons/tb";
 
 function NavBar() {
   const isAuthority = parseInt(localStorage.getItem("isAuthority"), 10); // Fetch isAuthority from local storage

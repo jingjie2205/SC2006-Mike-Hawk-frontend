@@ -16,6 +16,7 @@ import {
   PopoverBody,
   PopoverFooter,
   Textarea,
+  useToast,
 } from "@chakra-ui/react";
 
 const ProfilePage = () => {
@@ -37,6 +38,8 @@ const ProfilePage = () => {
   const [image, setImage] = useState(""); // State to store the fetched image URL
 
   const userId = localStorage.getItem("userId"); // Fetch userId from local storage
+  const toast = useToast(); // Initialize Chakra UI's toast
+
   
   useEffect(() => {
     // Fetch initial user data from backend
@@ -81,10 +84,51 @@ const ProfilePage = () => {
     fetchImage();
   }, [userId]);
 
-  const handleUpdate = () => {
-    setUser({ username: newUsername, email: newEmail });
-    alert("Profile updated successfully!");
+  const handleUpdate = async () => {
+    try {
+      const updatedUser = {
+        userName: newUserName,
+        emailAddress: newEmailAddress,
+      };
+  
+      // Send PUT request to update user information
+      const response = await axios.put(
+        `http://127.0.0.1:8000/users/users/${user.userID}/update/`,
+        updatedUser
+      );
+  
+      if (response.status === 200) {
+        setUser((prevUser) => ({
+          ...prevUser,
+          userName: newUserName,
+          emailAddress: newEmailAddress,
+        }));
+        toast({
+          title: "Profile updated successfully!",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+      } else {
+        toast({
+          title: "Failed to update profile. Username or email address already exists.",
+          description: "Please try again.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast({
+        title: "Username or email address already exists.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
+  
 
   const handlePasswordReset = () => {
     if (resetEmail === user.email) {
@@ -101,16 +145,15 @@ const ProfilePage = () => {
   };
 
   return (
-    <div>
+    <div overflowX="hidden">
       <NavBar />
-      <Flex bg="#06ADBF" p={4} align="center" width="100%" mt={4} justify="space-between">
-        <Text fontWeight="bold" fontSize="xl" color="white" whiteSpace="nowrap">
+      <Flex bg="#06ADBF" p={4} align="center" mt={4} justify="space-between">
+        <Text fontWeight="bold" fontSize="xl" color="white" >
           Hello, {user.userName}!
         </Text>
         <Image
           float="right"
           align="right"
-          margin="2% 0 2% 40%"
           boxSize="15%"
           borderRadius="50%"
           src={image || "https://bit.ly/dan-abramov"}
@@ -165,7 +208,7 @@ const ProfilePage = () => {
                   />
                 </PopoverBody>
                 <PopoverFooter display="flex" justifyContent="flex-end">
-                  <Button colorScheme="blue" onClick={handleUpdate}>
+                  <Button colorScheme="blue" onClick={handleUpdate} isDisabled={newUserName == user.userName && newEmailAddress == user.emailAddress}>
                     Update
                   </Button>
                 </PopoverFooter>
@@ -223,6 +266,9 @@ const ProfilePage = () => {
 
           <Button fontWeight="800" background="#06ADBF" color='white' width="66%" mb={4}>
             Log Out
+          </Button>
+          <Button fontWeight="800" background="#FF0000" color='white' width="66%" mb={4}>
+            Delete Account
           </Button>
         </VStack>
       </Box>

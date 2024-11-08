@@ -29,110 +29,105 @@ import {
 import { FaSearch } from "react-icons/fa";
 
 function AdminManageUser() {
-  // const [users, setUsers] = useState([
-  //   { id: 1, username: "Aaron", email: "aaron@example.com" },
-  //   { id: 2, username: "Allen", email: "allen@example.com" },
-  //   { id: 3, username: "David", email: "david@example.com" },
-  //   { id: 4, username: "Anna", email: "anna@example.com" },
-  //   { id: 5, username: "Amanda", email: "amanda@example.com" }
-  // ]);
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState(""); 
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm); 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [isDeleteConfirm, setIsDeleteConfirm] = useState(false); // State to track delete confirmation
+  const [isDeleteConfirm, setIsDeleteConfirm] = useState(false); 
 
-
-  // Function to fetch users from backend
+  // Fetch users from backend
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/users/users/all"); // Backend endpoint for users
-  
+        const response = await axios.get("http://127.0.0.1:8000/users/users/all");
         if (response.status === 200) {
-          console.log(response.data)
           setUsers(response.data);
         }
       } catch (error) {
         console.error("Error fetching users", error);
       }
     };
-
     fetchUsers();
   }, []);
 
-  // Function to handle search input changes
+  // Search input change handling
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
 
-  // useEffect to handle debouncing - updates the debounced term after 2 seconds
+  // Debouncing search term
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
-    }, 900); 
+    }, 500); // Reduced to 500ms for faster response
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
-    return () => clearTimeout(timer); // Clean up timeout if user types again before 2 seconds
-  }, [searchTerm]); // Runs whenever searchTerm changes
-
-  // Filter users based on the search term (case insensitive)
+  // Filtered users list
   const filteredUsers = users.filter((user) =>
     user.userName.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
   );
 
-  // Open modal to edit selected user
+  // Modal handling functions
   const openModal = (user) => {
-    console.log("Opening modal for user:", user); // Check the user object here
     setSelectedUser({ ...user });
     setIsModalOpen(true);
   };
 
-  // Close modal
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedUser(null);
   };
 
-  // Handle input change in modal
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setSelectedUser((prevUser) => ({ ...prevUser, [name]: value }));
   };
 
-  // Save changes made in modal
-  const handleSaveChanges = () => {
-    setUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.id === selectedUser.id ? selectedUser : user
-      )
-    );
-    closeModal();
-  };
-   // Delete user with confirmation
-   const handleDeleteClick = () => {
-    setIsDeleteConfirm(true); // Show the second confirmation step
-  };
+  // Delete user confirmation
+  const handleDeleteClick = () => setIsDeleteConfirm(true);
 
   // Delete user
   const handleDelete = async () => {
     try {
-      // Send DELETE request to backend
       const response = await axios.delete(`http://127.0.0.1:8000/users/users/?user_id=${selectedUser?.userID}`);
-  
       if (response.status === 200) {
-        // Successfully deleted, now update the local state to remove the user
-        setUsers((prevUsers) => prevUsers.filter((user) => user.id !== selectedUser?.userID));
-        closeModal();  // Close the modal after deletion
-        window.location.reload()
-      }
-      else {
-        console.error("Failed to delete user: ", response);
+        setUsers((prevUsers) => prevUsers.filter((user) => user.userID !== selectedUser?.userID));
+        closeModal();
+      } else {
         alert("Failed to delete user.");
       }
     } catch (error) {
       console.error("Error deleting user", error);
-      // Optionally, you can show a toast message or alert here
+    }
+  };
+
+  // Update user
+  const handleUpdate = async () => {
+    try {
+      const updatedUser = {
+        userName: selectedUser.userName,
+        emailAddress: selectedUser.emailAddress
+      };
+
+      const response = await axios.put(
+        `http://127.0.0.1:8000/users/users/${selectedUser.userID}/update/`,
+        updatedUser
+      );
+
+      if (response.status === 200) {
+        setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user.userID === selectedUser.userID ? { ...user, ...updatedUser } : user
+          )
+        );
+        closeModal();
+      } else {
+        alert("Failed to update user.");
+      }
+    } catch (error) {
+      console.error("Error updating user", error);
     }
   };
 
@@ -152,37 +147,29 @@ function AdminManageUser() {
           height={45}
           borderRadius={25}
           backgroundColor="#D3D3D3"
-          border-color="black"
+          borderColor="black"
           mr="3%"
           value={searchTerm}
           onChange={handleSearchChange}
         />
       </HStack>
 
-      <Text
-        fontWeight="500"
-        mt="3%"
-        ml="5%"
-        mb="3%"
-        fontSize="100%"
-        align="left"
-        color="black"
-      >
+      <Text fontWeight="500" mt="3%" ml="5%" mb="3%" fontSize="100%" align="left" color="black">
         User List:
       </Text>
 
       <TableContainer>
         <Table variant="simple">
-        <Thead>
-          <Tr>
-            <Th>User Name</Th>
-            <Th>Email Address</Th>
-          </Tr>
-        </Thead>
+          <Thead>
+            <Tr>
+              <Th>User Name</Th>
+              <Th>Email Address</Th>
+            </Tr>
+          </Thead>
           <Tbody>
             {filteredUsers.length > 0 ? (
               filteredUsers.map((user) => (
-                <Tr key={user.id} onClick={() => openModal(user)} _hover={{ bg: "gray.100", cursor: "pointer" }}>
+                <Tr key={user.userID} onClick={() => openModal(user)} _hover={{ bg: "gray.100", cursor: "pointer" }}>
                   <Td>{user.userName}</Td>
                   <Td>{user.emailAddress}</Td>
                 </Tr>
@@ -204,22 +191,22 @@ function AdminManageUser() {
           <ModalBody>
             <Text mb="8px">Current Username: {selectedUser?.userName}</Text>
             <Input
-              name="username"
-              value={selectedUser?.username || ""}
+              name="userName"
+              value={selectedUser?.userName || ""}
               onChange={handleInputChange}
               placeholder="Enter new username"
               mb={4}
             />
             <Text mb="8px">Current Email: {selectedUser?.emailAddress}</Text>
             <Input
-              name="email"
-              value={selectedUser?.email || ""}
+              name="emailAddress"
+              value={selectedUser?.emailAddress || ""}
               onChange={handleInputChange}
               placeholder="Enter new email"
             />
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={handleSaveChanges}>
+            <Button colorScheme="blue" mr={3} onClick={handleUpdate}>
               Save
             </Button>
             {!isDeleteConfirm ? (
@@ -227,11 +214,9 @@ function AdminManageUser() {
                 Delete
               </Button>
             ) : (
-              <>
-                <Button colorScheme="red" mr={3} onClick={handleDelete}>
-                  Confirm Delete
-                </Button>
-              </>
+              <Button colorScheme="red" mr={3} onClick={handleDelete}>
+                Confirm Delete
+              </Button>
             )}
             <Button variant="ghost" onClick={closeModal}>
               Cancel
