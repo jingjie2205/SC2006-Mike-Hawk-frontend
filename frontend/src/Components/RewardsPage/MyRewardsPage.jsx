@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Button, Link, Box, Text, Stat, StatLabel, StatNumber, VStack } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
+import { Button, Box, Text, Stat, StatLabel, StatNumber, VStack } from "@chakra-ui/react";
 import NavBar from "../../Common/NavBar";
 import MyRewardsCard from "./MyRewardsCard";
 
@@ -26,7 +27,7 @@ function MyRewardsPage() {
   return (
     <div>
         <NavBar/>
-        <VStack bg="#06ADBF" align="center" mt="3%">
+        <VStack bg="#06ADBF" align="center" mt="3%" mb="3%">
         <Text fontWeight="1000" mt="3%" mb="3%" fontSize="200%" color="white">
          My Rewards
         </Text>
@@ -40,8 +41,11 @@ function MyRewardsPage() {
               />
             ))
         ) : (
-            <Text>No rewards available.</Text>
+            <Text>You don't have any rewards yet.</Text>
         )}
+        <Button as={Link} to="/rewards" bg="#06ADBF" color="white" mt="3%">
+        Redeem Rewards
+        </Button>
     </div>
   );
 }

@@ -60,7 +60,7 @@ function NavBar() {
                 </Tooltip>
 
                 <Tooltip label="Rewards">
-                  <Link as={RouterLink} to="/rewards">
+                  <Link as={RouterLink} to="/myrewards">
                     <IoGiftOutline size={30} color="white" />
                   </Link>
                 </Tooltip>

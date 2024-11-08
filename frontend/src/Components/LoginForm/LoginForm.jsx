@@ -79,9 +79,14 @@ function LoginForm() {
   };
 
   return (
-    <div>
-      
-
+    <Box
+    bgGradient="linear(to-r, teal.500, green.500)" // Set your background here
+    minHeight="100vh" // Ensures it covers the full height of the viewport
+    display="flex"
+    justifyContent="center"
+    alignItems="center"
+    width="100vw"
+   >
       <Box
         w={["full", "md"]}
         p={[8, 10]}
@@ -149,7 +154,7 @@ function LoginForm() {
           </div>
         </FormControl>
       </Box>
-    </div>
+    </Box>
   );
 }
 

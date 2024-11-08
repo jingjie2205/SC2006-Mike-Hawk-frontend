@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import App from "./App.jsx";
+import LoginForm from "./Components/LoginForm/LoginForm.jsx";
 import "./index.css";
 import { ChakraProvider } from "@chakra-ui/react";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -21,8 +21,8 @@ import AdminRestrictedRoute from "./Components/AdminRestrictedRoute/AdminRestric
 
 
 const router = createBrowserRouter([
-  { path: "/", element: <App /> },
-  { path: "/login", element: <App /> },
+  { path: "/", element: <LoginForm /> },
+  { path: "/login", element: <LoginForm /> },
   { path: "/register", element: <RegisterForm /> },
   { path: "/makereport", element: <MakeReport /> },
   { path: "/profile", element: <ProtectedRoute><ProfilePage /></ProtectedRoute> },
