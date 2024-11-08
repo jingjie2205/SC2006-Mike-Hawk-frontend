@@ -7,18 +7,33 @@ import { Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton } from '@ch
 
 import {
   Box,
-  FormControl,
-  FormLabel,
-  Input,
   Button,
+  Flex,
+  Heading,
+  Input,
   Image,
+  VStack,
+  Text,
   Link,
+  FormLabel,
+  FormControl,
+  useToast,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
 } from "@chakra-ui/react";
 
 function LoginForm() {
   // states for login input boxes
   const [name, setUsername] = useState("");
   const [pw, setPassword] = useState("");
+  const [resetEmail, setResetEmail] = useState(""); // For the email entered in the reset modal
+  const { isOpen, onOpen, onClose } = useDisclosure(); // Control modal visibility
   const [errorMessage, setErrorMessage] = useState(null); // State to store error message
   const [isVerificationSuccess, setIsVerificationSuccess] = useState(false);
   
@@ -101,6 +116,44 @@ function LoginForm() {
     }
   };
 
+  const handlePasswordReset = async () => {
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/public/public/password-reset-request",
+        { email: resetEmail }
+      );
+
+      if (response.status === 200) {
+        toast({
+          title: "Password Reset Email Sent",
+          description: "A password reset link has been sent to your email.",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+        onClose(); // Close modal after success
+      } else {
+        toast({
+          title: "Failed to send reset email",
+          description: "Please check the email and try again.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      console.error("Password reset error:", error);
+      toast({
+        title: "Error",
+        description: "An error occurred. Please try again later.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+
   return (
     <Box
       bgGradient="linear(to-r, teal.500, green.500)" // Set your background here
@@ -173,7 +226,7 @@ function LoginForm() {
             Login
           </Button>
           <div>
-            <FormLabel htmlFor="register" textAlign={"center"}>
+            <FormLabel htmlFor="register" textAlign={"center"} mt="3%">
               Don't have an account?{" "}
               <Link
                 as={RouterLink}
@@ -185,8 +238,41 @@ function LoginForm() {
               </Link>
             </FormLabel>
           </div>
+          <div>
+            <FormLabel htmlFor="reset" textAlign={"center"}>
+              Forgot password?{" "}
+              <Link
+                onClick={onOpen}
+                color="blue.400"
+                _hover={{ color: "blue.600" }}
+              >
+                Reset
+              </Link>
+            </FormLabel>
+          </div>
         </FormControl>
       </Box>
+      {/* Password Reset Modal */}
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Reset Password</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text mb={4}>Enter your email address to receive a password reset link.</Text>
+            <Input
+              placeholder="Email Address"
+              value={resetEmail}
+              onChange={(e) => setResetEmail(e.target.value)}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" onClick={handlePasswordReset}>
+              Send Reset Email
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 }
