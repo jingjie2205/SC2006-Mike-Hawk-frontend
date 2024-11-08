@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
   Box,
@@ -6,33 +6,17 @@ import {
   Text,
   Image,
   CardBody,
-  AlertDialog,
-  AlertDialogOverlay,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogBody,
-  AlertDialogFooter,
-  useDisclosure,
-  Button,
   useToast,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  FocusLock,
-  PopoverArrow,
-  PopoverCloseButton,
-  Stack,
-  FormControl,
-  FormLabel,
-  Input,
 } from "@chakra-ui/react";
 
 function MyRewardsCard({ rewardID, expiry, giftcode }) {
+  console.log(rewardID);
   const [image, setImage] = useState(""); // State to store the fetched image URL
-  const [reward, setReward] = useState([]);
-  const userId = localStorage.getItem("userId"); // Fetch userId from local storage
+  const [reward, setReward] = useState({});
+  const [error, setError] = useState(""); // State to store error messages
+  const toast = useToast();
 
-  // Fetch rewards from the database
+  // Fetch reward details from the database
   useEffect(() => {
     const fetchReward = async () => {
       try {
@@ -41,41 +25,54 @@ function MyRewardsCard({ rewardID, expiry, giftcode }) {
         );
         if (response.status === 200) {
           setReward(response.data);
-          const description = reward.description;
         }
       } catch (err) {
-        console.error("Error fetching rewards:", err);
-        setError("Failed to fetch rewards. Please try again later.");
+        console.error("Error fetching reward details:", err);
+        setError("Failed to fetch reward details. Please try again later.");
+        toast({
+          title: "Error",
+          description: "Failed to fetch reward details.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
       }
     };
     fetchReward();
   }, [rewardID]);
 
+  // Fetch image URL based on reward description
   useEffect(() => {
-    // Fetch image URL based on rewardId
     const fetchImage = async () => {
-      try {
-        const response = await axios.get(
-          `http://127.0.0.1:8000/rewards/rewards/${description}/image`,
-          {
-            responseType: "blob",
+        try {
+          const response = await axios.get(
+            `http://127.0.0.1:8000/rewards/rewards/${rewardID}/image`,
+            { responseType: 'blob' }
+          );
+          if (response.headers['content-type'].includes('image/png')) {
+            const imageUrl = URL.createObjectURL(response.data);
+            setImage(imageUrl);
+          } else {
+            console.error("Fetched content is not an image");
           }
-        );
-        // Check if content is an image
-        if (response.headers["content-type"].includes("image/png")) {
-          // Convert blob to an object URL
-          const imageUrl = URL.createObjectURL(response.data);
-          setImage(imageUrl);
-        } else {
-          console.error("Fetched content is not an image");
+        } catch (error) {
+          console.error("Error fetching image:", error);
         }
-      } catch (error) {
-        console.error("Error fetching image:", error);
-      }
-    };
+      };
 
-    fetchImage();
-  }, [rewardID]);
+      fetchImage();
+    }, [reward.description]);
+
+  // Convert expiry date from Unix timestamp
+  const convertExpiry = (unixTimestamp) => {
+    const date = new Date(unixTimestamp * 1000);
+    return date.toLocaleDateString("en-US", {
+      weekday: "short",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
 
   return (
     <Card
@@ -98,13 +95,15 @@ function MyRewardsCard({ rewardID, expiry, giftcode }) {
           rounded={3}
           alignContent={"center"}
           ml="3%"
+          alt={reward.description || "Reward Image"}
         />
         <Box
           justifyContent="space-between"
           width={"500px"}
           className="text-container"
         >
-          <Text>{reward.description}</Text>
+          <Text>{reward.description || "Reward Description"}</Text>
+          <Text size="sm">Expiry: {expiry ? convertExpiry(expiry) : "No Expiry"}</Text>
         </Box>
       </CardBody>
     </Card>

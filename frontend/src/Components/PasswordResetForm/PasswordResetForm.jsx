@@ -135,7 +135,7 @@ function PasswordResetForm() {
               variant="solid"
               colorScheme="blue"
               width="full"
-              onSubmit={handleSubmit}
+              onClick={handleSubmit}
             >
               Reset Password
             </Button>

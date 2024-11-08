@@ -161,7 +161,7 @@ const ProfilePage = () => {
     try {
       // Send a request to the backend to trigger a password reset email
       const response = await axios.post(
-        `http://127.0.0.1:8000/public/public/password-reset-request/`, {
+        "http://127.0.0.1:8000/public/public/password-reset-request", {
           email: user.emailAddress
         }
       );
