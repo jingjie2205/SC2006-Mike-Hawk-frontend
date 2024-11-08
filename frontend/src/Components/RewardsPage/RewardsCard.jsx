@@ -63,11 +63,9 @@ function RewardsCard({
   });
 
   const handleRedemption = async () => {
-    if (userPoints >= pointsRequired) {
       try {
-        // Deduct points and send the update to the backend
-        const newPoints = userPoints - pointsRequired;
-        const response = await axios.put(`http://127.0.0.1:8000/users/users?user_id=${userId}&points=${newPoints}`);
+        // post the request to redeem reward to the backend
+        const response = await axios.post(`http://127.0.0.1:8000/rewards/rewards/claim/${rewardID}?user_id=${userId}`);
   
         if (response.status === 200) {
           toast({
@@ -81,9 +79,19 @@ function RewardsCard({
           setTimeout(() => {
             window.location.reload();
           }, 1000);
-
-        } else {
-          throw new Error("Failed to update points");
+        }
+        else if (response.status === 403) {
+          toast({
+            title: "Insufficient Points",
+            description: "You do not have enough points to redeem this reward!",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+          onRedemptionClose();
+        }
+        else {
+          throw new Error("Failed to redeem");
         }
       } catch (error) {
         console.error("Error updating points:", error);
@@ -94,18 +102,9 @@ function RewardsCard({
           duration: 5000,
           isClosable: true,
         });
+        onRedemptionClose();
       }
-    } else {
-      onRedemptionClose();
-      toast({
-        title: "Insufficient Points",
-        description: "You do not have enough points to redeem this reward!",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-    }
-  };
+    };
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
@@ -258,7 +257,7 @@ function RewardsCard({
               <Button ref={cancelRef} onClick={onRedemptionClose}>
                 No
               </Button>
-              <Button colorScheme="red" onClick={handleRedemption} ml={3}>
+              <Button colorScheme="green" onClick={handleRedemption} ml={3}>
                 Yes
               </Button>
             </AlertDialogFooter>

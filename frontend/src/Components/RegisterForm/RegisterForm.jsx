@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import "../LoginForm/LoginForm.css";
-import NavBar from "../../Common/NavBar";
 import axios from "axios";
 
 import {
