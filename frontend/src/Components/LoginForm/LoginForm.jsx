@@ -1,7 +1,7 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import { FaUser, FaLock } from "react-icons/fa";
 import "./LoginForm.css";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useLocation } from "react-router-dom";
 import axios from "axios";
 import { Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton } from '@chakra-ui/react';
 
@@ -13,7 +13,6 @@ import {
   Button,
   Image,
   Link,
-  border,
 } from "@chakra-ui/react";
 
 function LoginForm() {
@@ -21,6 +20,20 @@ function LoginForm() {
   const [name, setUsername] = useState("");
   const [pw, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null); // State to store error message
+  const [isVerificationSuccess, setIsVerificationSuccess] = useState(false);
+  
+  const location = useLocation();
+  
+  useEffect(() => {
+    // Check if there's a verification code in the URL params
+    const params = new URLSearchParams(location.search);
+    const verificationCode = params.get("verification_key");
+    
+    if (verificationCode) {
+      // Verify user on the backend using the verification code
+      verifyUser(verificationCode);
+    }
+  }, [location]);
 
   const handleUsername = (e) => {
     setUsername(e.target.value);
@@ -39,54 +52,64 @@ function LoginForm() {
           password: pw,
         }
       );
+      
       if (response.status === 200) {
-        // Handle successful login (response.data contains the response)
-        console.log("Login successful", response.data);
-      } else {
-        // Handle unexpected status code
-        console.log("Unexpected response code:", response.status);
-      }
+        localStorage.setItem("authToken", response.data.token);
+        localStorage.setItem("userId", response.data.user_id);
+        localStorage.setItem("isAuthority", response.data.isAuthority);
+        localStorage.setItem("isModerator", response.data.isModerator);
 
-      localStorage.setItem("authToken", response.data.token);
-      localStorage.setItem("userId", response.data.user_id);
-      localStorage.setItem("isAuthority", response.data.isAuthority);
-      localStorage.setItem("isModerator", response.data.isModerator);
-
-      // Conditional redirect based on the user's role
-      if (response.data.isAuthority) {
-        window.location.href = "/userdashboard"; // Redirect to authority dashboard
-      } else if (response.data.isModerator) {
-        window.location.href = "/moderatordashboard"; // Redirect to moderator dashboard
+        // Conditional redirect based on the user's role
+        if (response.data.isAuthority) {
+          window.location.href = "/userdashboard"; // Redirect to authority dashboard
+        } else if (response.data.isModerator) {
+          window.location.href = "/moderatordashboard"; // Redirect to moderator dashboard
+        } else {
+          window.location.href = "/userdashboard"; // Redirect to user dashboard
+        }
       } else {
-        window.location.href = "/userdashboard"; // Redirect to user dashboard
+        setErrorMessage("Invalid Credentials");
       }
     } catch (error) {
       if (error.response) {
-        // Handle error based on the server's response
-        if (error.response.status != 200) {
+        if (error.response.status !== 200) {
           setErrorMessage("Invalid Credentials");
         } else {
           setErrorMessage(`Error: ${error.response.status} - ${error.response.statusText}`);
         }
       } else if (error.request) {
-        // The request was made but no response was received
         setErrorMessage("No response from the server.");
       } else {
-        // Something else happened while setting up the request
         setErrorMessage("Error setting up the request: " + error.message);
       }
     }
   };
 
+  const verifyUser = async (verificationCode) => {
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:8000/public/public/verify/${verificationCode}`,
+      );
+      if (response.status === 200) {
+        setIsVerificationSuccess(true);
+        setErrorMessage(null);
+      } else {
+        setErrorMessage("Verification failed. Please check your link and try again.");
+      }
+    } catch (error) {
+      setErrorMessage("Error verifying the email. Please try again.");
+    }
+  };
+
   return (
     <Box
-    bgGradient="linear(to-r, teal.500, green.500)" // Set your background here
-    minHeight="100vh" // Ensures it covers the full height of the viewport
-    display="flex"
-    justifyContent="center"
-    alignItems="center"
-    width="100vw"
-   >
+      bgGradient="linear(to-r, teal.500, green.500)" // Set your background here
+      minHeight="100vh" // Ensures it covers the full height of the viewport
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      width="100vw"
+    >
       <Box
         w={["full", "md"]}
         p={[8, 10]}
@@ -99,35 +122,45 @@ function LoginForm() {
         bg="white"
       >
         <Image src="./public/RQ.png" alt="ReportQuest Logo" rounded={10} />
+        
         {/* Error message box */}
         {errorMessage && (
-        <Alert status="error" mt={2}>
-          <AlertIcon />
-          <AlertTitle mr={2}>Error</AlertTitle>
-          <AlertDescription>{errorMessage}</AlertDescription>
-          <CloseButton position="absolute" right="8px" top="8px" onClick={() => setErrorMessage(null)} />
-        </Alert>
+          <Alert status="error" mt={2}>
+            <AlertIcon />
+            <AlertTitle mr={2}>Error</AlertTitle>
+            <CloseButton position="absolute" right="8px" top="8px" onClick={() => setErrorMessage(null)} />
+          </Alert>
         )}
+
+        {/* Verification success message */}
+        {isVerificationSuccess && (
+          <Alert status="success" mt={2}>
+            <AlertIcon />
+            <AlertTitle>Verification Successful!</AlertTitle>
+            <CloseButton position="absolute" right="8px" top="8px" onClick={() => setIsVerificationSuccess(false)} />
+          </Alert>
+        )}
+
         <FormControl>
           <FormLabel htmlFor="Username">Username</FormLabel>
-          <div class="wrapper">
+          <div className="wrapper">
             <Input
               id="username"
               type="username"
               rounded={20}
               onChange={handleUsername}
             />
-            <FaUser class="icon" />
+            <FaUser className="icon" />
           </div>
           <FormLabel htmlFor="Password">Password</FormLabel>
-          <div class="wrapper">
+          <div className="wrapper">
             <Input
               id="password"
               type="password"
               rounded={20}
               onChange={handlePassword}
             />
-            <FaLock class="icon" />
+            <FaLock className="icon" />
           </div>
           <Button
             borderRadius={20}

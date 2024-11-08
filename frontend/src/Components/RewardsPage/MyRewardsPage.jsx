@@ -15,6 +15,7 @@ function MyRewardsPage() {
       try {
         // Fetch the rewards data for the user
         const response = await axios.get(`http://127.0.0.1:8000/rewards/rewards/myrewards/${userId}`);
+        console.log(response.data);
         setMyRewards(response.data); // Assuming it returns a list of rewards
       } catch (error) {
         console.error("Error fetching rewards:", error);
@@ -25,9 +26,9 @@ function MyRewardsPage() {
   }, []);
 
   return (
-    <div>
+    <div align="center">
         <NavBar/>
-        <VStack bg="#06ADBF" align="center" mt="3%" mb="3%">
+        <VStack bg="#06ADBF" align="center" mt="3%" mb="3%" >
         <Text fontWeight="1000" mt="3%" mb="3%" fontSize="200%" color="white">
          My Rewards
         </Text>

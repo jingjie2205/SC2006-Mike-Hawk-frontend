@@ -57,7 +57,7 @@ function RewardsPage() {
           Rewards Catalogue
         </Text>
       </VStack>
-      <Box borderRadius="lg" p="4" maxW="1100px" mx="auto" bg="white">
+      <Box borderRadius="lg" p="4" maxW="1100px" mx="auto" bg="white" align="center">
         <Box
           borderWidth="2px"
           borderRadius="lg"

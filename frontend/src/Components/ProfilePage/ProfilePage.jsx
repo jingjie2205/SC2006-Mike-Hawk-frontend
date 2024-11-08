@@ -40,8 +40,6 @@ const ProfilePage = () => {
 
   const [newUserName, setNewUserName] = useState("");
   const [newEmailAddress, setNewEmailAddress] = useState("");
-  const [feedback, setFeedback] = useState("");
-  const [resetEmail, setResetEmail] = useState("");
   const [image, setImage] = useState(""); // State to store the fetched image URL
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false); // State for delete account dialog
@@ -159,12 +157,42 @@ const ProfilePage = () => {
     }
   };
 
-  const handlePasswordReset = () => {
-    if (resetEmail === user.email) {
-      alert(`A password reset link has been sent to ${resetEmail}`);
-      setResetEmail(""); // Clear input after reset
-    } else {
-      alert("Email does not match our records. Please try again.");
+  const handlePasswordReset = async () => {
+    try {
+      // Send a request to the backend to trigger a password reset email
+      const response = await axios.post(
+        `http://127.0.0.1:8000/public/public/password-reset-request/`, {
+          email: user.emailAddress
+        }
+      );
+  
+      // Handle the backend response
+      if (response.status === 200) {
+        toast({
+          title: "Password Reset Email Sent",
+          description: "A password reset link has been sent to your email address.",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to send the reset email. Please try again later.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      console.error("Error requesting password reset:", error);
+      toast({
+        title: "Error",
+        description: "An error occurred while processing your request. Please try again later.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
@@ -338,14 +366,7 @@ const ProfilePage = () => {
               <PopoverHeader fontWeight="bold">
                 Confirm Email for Password Reset
               </PopoverHeader>
-              <PopoverBody>
-                <Text mb={2}>Please confirm your email:</Text>
-                <Input
-                  value={resetEmail}
-                  onChange={(e) => setResetEmail(e.target.value)}
-                  placeholder="Enter your email"
-                />
-              </PopoverBody>
+              <PopoverBody>Email: {user.emailAddress}</PopoverBody>
               <PopoverFooter display="flex" justifyContent="flex-end">
                 <Button colorScheme="blue" onClick={handlePasswordReset}>
                   Send Reset Email
