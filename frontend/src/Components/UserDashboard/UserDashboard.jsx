@@ -8,6 +8,7 @@ import {
   HStack,
   InputGroup,
   InputLeftElement,
+  Box,
 } from "@chakra-ui/react";
 import { FaSearch } from "react-icons/fa";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
@@ -62,9 +63,8 @@ function UserDashboard() {
   }, [debouncedTerm]);
 
   return (
-    <div vw="100%" >
-      <NavBar/>
-      <VStack bg="#06ADBF" mt="3%" >
+    <div vw="100%">
+      <VStack bg="#06ADBF" mt="3%">
         <Text
           fontWeight="1000"
           mt="3%"
@@ -78,11 +78,11 @@ function UserDashboard() {
         <HStack alignItems="center" mt="0px">
           <InputGroup startElement={<FaSearch />}>
             <InputLeftElement h="full" ml="2%">
-              <FaSearch color="white"  fontSize='1.2em' pointerEvents='none'/>
+              <FaSearch color="white" fontSize="1.2em" pointerEvents="none" />
             </InputLeftElement>
             <Input
               placeholder="Search Announcements"
-              _placeholder={{ color: 'white' }}
+              _placeholder={{ color: "white" }}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)} // Update search term with user input
               htmlSize="50%"
@@ -108,6 +108,10 @@ function UserDashboard() {
       {filteredPosts.map((post) => (
         <Post key={post.id} post={post} vw="100vw"/>
       ))}
+      <Box mb="60px" />
+      <Box position="fixed" bottom="0" width="100%" overflow="hidden">
+        <NavBar />
+      </Box>
     </div>
   );
 }

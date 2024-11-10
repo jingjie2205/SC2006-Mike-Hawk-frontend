@@ -47,11 +47,9 @@ function MakeReport() {
     }
   };
 
-  handleSubmit();
 
   return (
     <div>
-      <NavBar />
       <VStack bg="#06ADBF" align="center" mt="3%">
         <Text fontWeight="1000" mt="3%" mb="3%" fontSize="200%" color="white">
           Make Report
@@ -69,6 +67,7 @@ function MakeReport() {
         display="flex"
         flexDirection="column"
         alignItems="center"
+        mb="60px"
       >
         <ImageUpload onImageSelect={handleImageSelect} />
         <Textarea
@@ -97,6 +96,9 @@ function MakeReport() {
         >
           Submit
         </Button>
+      </Box>
+      <Box position="fixed" bottom="0" width="100%" overflow="hidden" zIndex="1000">
+        <NavBar />
       </Box>
     </div>
   );

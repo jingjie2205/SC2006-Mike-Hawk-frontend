@@ -6,7 +6,6 @@ import {
   Input,
   Button,
   Image,
-  Link,
   Textarea,
 } from "@chakra-ui/react";
 
@@ -16,8 +15,10 @@ function ImageUpload({ onImageSelect }) {
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      // Store the image file in state
-      setImage(file);
+      // Create a URL for the image file
+      const imageUrl = URL.createObjectURL(file);
+      // Store the image URL in state
+      setImage(imageUrl);
       onImageSelect(file);
     }
   };
@@ -26,6 +27,7 @@ function ImageUpload({ onImageSelect }) {
   const removeImage = () => {
     setImage(null); // Clear the image from state
   };
+
   return (
     <Box textAlign="center" p={4}>
       {/* file selector */}
@@ -47,8 +49,6 @@ function ImageUpload({ onImageSelect }) {
         display="flex"
         alignItems="center"
         justifyContent="center"
-        overflow="hidden"
-        position="relative"
       >
         {/* camera icon */}
         {!image && (

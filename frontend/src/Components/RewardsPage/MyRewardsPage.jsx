@@ -47,7 +47,6 @@ function MyRewardsPage() {
 
   return (
     <div align="center">
-        <NavBar/>
         <VStack bg="#06ADBF" align="center" mt="3%" mb="3%" >
         <Text fontWeight="1000" mt="3%" mb="3%" fontSize="200%" color="white">
          My Rewards
@@ -82,10 +81,13 @@ function MyRewardsPage() {
         ) : (
             <Text>You don't have any rewards yet.</Text>
         )}
-        <Button as={Link} to="/rewards" bg="#06ADBF" color="white" mt="3%">
+        <Button as={Link} to="/rewards" bg="#06ADBF" color="white" mt="3%" mb="60px">
         Redeem Rewards
         </Button>
         </Box>
+        <Box position="fixed" bottom="0" width="100%" overflow="hidden">
+        <NavBar />
+      </Box>
     </div>
   );
 }

@@ -84,7 +84,6 @@ function UserMyReport() {
 
   return (
     <div>
-      <NavBar />
 
       {error && (
         <Box bg="red.100" p="4" mb="4" borderRadius="md">
@@ -197,6 +196,9 @@ function UserMyReport() {
             ))
         )}
       </VStack>
+      <Box position="fixed" bottom="0" width="100%" overflow="hidden">
+        <NavBar />
+      </Box>
     </div>
   );
 }

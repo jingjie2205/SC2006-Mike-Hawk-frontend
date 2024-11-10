@@ -25,59 +25,52 @@ function NavBar() {
   return (
     <Box
       bg="gray.800"
-      width="96vw" // Limits the width of the navbar
-      borderRadius="25px" // Makes the navbar rounded
+      width="100vw" // Limits the width of the navbar
       mt={4} // Adds top margin for spacing
       py={2} // Adds some padding for vertical spacing
-      ml="2%"
-      mr="2%"
       shadow="md"
     >
       <Flex>
-        <HStack>
+        <HStack ml="5%" mr="5%" width="90%" justify="space-between">
           <Image
             src="/RQ.png"
             alt="ReportQuest Logo"
             height="50"
             rounded="50%"
-            ml="5%"
-            mr="5%"
           />
           {/* Navigation Links */}
-          <HStack as="nav" spacing="5%">
-            <Tooltip label="Dashboard">
-              <Link as={RouterLink} to="/userdashboard">
-                <IoHomeOutline size={30} color="white" />
-              </Link>
-            </Tooltip>
-            
-            {isAuthority === 0 && (
-              <>
-                <Tooltip label="Make Report">
-                  <Link as={RouterLink} to="/makereport">
-                    <GoReport size={30} color="white" />
-                  </Link>
-                </Tooltip>
+          <Tooltip label="Dashboard">
+            <Link as={RouterLink} to="/userdashboard">
+              <IoHomeOutline size={30} color="white" />
+            </Link>
+          </Tooltip>
 
-                <Tooltip label="Rewards">
-                  <Link as={RouterLink} to="/myrewards">
-                    <IoGiftOutline size={30} color="white" />
-                  </Link>
-                </Tooltip>
-              </>
-            )}
+          {isAuthority === 0 && (
+            <>
+              <Tooltip label="Make Report">
+                <Link as={RouterLink} to="/makereport">
+                  <GoReport size={30} color="white" />
+                </Link>
+              </Tooltip>
 
-            <Tooltip label="My Reports">
-              <Link as={RouterLink} to="/myreports">
-                <IoFileTrayFullOutline size={30} color="white" />
-              </Link>
-            </Tooltip>
-            <Tooltip label="Profile">
-              <Link as={RouterLink} to="/profile">
-                <FaUserCircle size={30} color="white" />
-              </Link>
-            </Tooltip>
-          </HStack>
+              <Tooltip label="Rewards">
+                <Link as={RouterLink} to="/myrewards">
+                  <IoGiftOutline size={30} color="white" />
+                </Link>
+              </Tooltip>
+            </>
+          )}
+
+          <Tooltip label="My Reports">
+            <Link as={RouterLink} to="/myreports">
+              <IoFileTrayFullOutline size={30} color="white" />
+            </Link>
+          </Tooltip>
+          <Tooltip label="Profile">
+            <Link as={RouterLink} to="/profile">
+              <FaUserCircle size={30} color="white" />
+            </Link>
+          </Tooltip>
         </HStack>
       </Flex>
     </Box>

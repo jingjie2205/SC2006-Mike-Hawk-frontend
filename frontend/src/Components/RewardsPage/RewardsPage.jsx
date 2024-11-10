@@ -51,7 +51,6 @@ function RewardsPage() {
 
   return (
     <div>
-      <NavBar />
       <VStack bg="#06ADBF" align="center" mt="3%">
         <Text fontWeight="1000" mt="3%" mb="3%" fontSize="200%" color="white">
           Rewards Catalogue
@@ -95,9 +94,12 @@ function RewardsPage() {
             />
           ))}
         </Box>
-        <Button as={Link} to="/myrewards" bg="#06ADBF" color="white">
+        <Button as={Link} to="/myrewards" bg="#06ADBF" color="white" mb="60px"> 
         My Rewards
         </Button>
+      </Box>
+      <Box position="fixed" bottom="0" width="100%" overflow="hidden">
+        <NavBar />
       </Box>
     </div>
   );

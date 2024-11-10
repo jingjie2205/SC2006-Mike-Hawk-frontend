@@ -24,7 +24,15 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
 } from "@chakra-ui/react";
+import ImageUpload from "../MakeReport/ImageUpload";
 
 const ProfilePage = () => {
   const [user, setUser] = useState({
@@ -41,10 +49,12 @@ const ProfilePage = () => {
   const [newUserName, setNewUserName] = useState("");
   const [newEmailAddress, setNewEmailAddress] = useState("");
   const [image, setImage] = useState(""); // State to store the fetched image URL
+  const [selectedImage, setSelectedImage] = useState(null); // State to store selected image file
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false); // State for delete account dialog
   const cancelRef = useRef();
   const [error, setError] = useState("");
+  const [isImageUploadOpen, setIsImageUploadOpen] = useState(false);
 
   const userId = localStorage.getItem("userId"); // Fetch userId from local storage
   const toast = useToast(); // Initialize Chakra UI's toast
@@ -95,6 +105,67 @@ const ProfilePage = () => {
 
     fetchImage();
   }, [userId]);
+
+  const handleImageSelect = async (file) => {
+    const imageUrl = URL.createObjectURL(file);
+    setImage(imageUrl);
+    setSelectedImage(file); // Store selected image file
+  };
+
+  const handleImageUpdate = async () => {
+    if (selectedImage) {
+      // Create form data to send the image file
+      const formData = new FormData();
+      formData.append("file", selectedImage);
+
+      try {
+        const response = await axios.post(
+          `http://127.0.0.1:8000/users/users/profilePicture/${userId}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        if (response.status === 200) {
+          toast({
+            title: "Profile picture updated successfully!",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
+          setIsImageUploadOpen(false); // Close modal after successful update
+        } else {
+          toast({
+            title: "Failed to update profile picture.",
+            description: "Please try again later.",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+        }
+      } catch (error) {
+        console.error("Error uploading profile picture:", error);
+        toast({
+          title: "Error",
+          description: "An error occurred while uploading your profile picture.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    } else {
+      toast({
+        title: "No image selected",
+        description: "Please select an image before submitting.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
 
   const handleUpdate = async () => {
     if (!newUserName || !newEmailAddress) {
@@ -161,16 +232,18 @@ const ProfilePage = () => {
     try {
       // Send a request to the backend to trigger a password reset email
       const response = await axios.post(
-        "http://127.0.0.1:8000/public/public/password-reset-request", {
-          email: user.emailAddress
+        "http://127.0.0.1:8000/public/public/password-reset-request",
+        {
+          email: user.emailAddress,
         }
       );
-  
+
       // Handle the backend response
       if (response.status === 200) {
         toast({
           title: "Password Reset Email Sent",
-          description: "A password reset link has been sent to your email address.",
+          description:
+            "A password reset link has been sent to your email address.",
           status: "success",
           duration: 5000,
           isClosable: true,
@@ -178,7 +251,8 @@ const ProfilePage = () => {
       } else {
         toast({
           title: "Error",
-          description: "Failed to send the reset email. Please try again later.",
+          description:
+            "Failed to send the reset email. Please try again later.",
           status: "error",
           duration: 5000,
           isClosable: true,
@@ -188,7 +262,8 @@ const ProfilePage = () => {
       console.error("Error requesting password reset:", error);
       toast({
         title: "Error",
-        description: "An error occurred while processing your request. Please try again later.",
+        description:
+          "An error occurred while processing your request. Please try again later.",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -260,20 +335,38 @@ const ProfilePage = () => {
 
   return (
     <div>
-      <NavBar />
       <Flex bg="#06ADBF" p={4} align="center" mt={4} justify="space-between">
         <Text fontWeight="bold" fontSize="xl" color="white">
           Hello, {user.userName}!
         </Text>
         <Image
-          float="right"
-          align="right"
+          onClick={() => setIsImageUploadOpen(true)}
           boxSize="15%"
           borderRadius="50%"
           src={image || "https://bit.ly/dan-abramov"}
           alt="Profile Picture"
+          cursor="pointer"
         />
       </Flex>
+      {/* Image Upload Modal */}
+      <Modal
+        isOpen={isImageUploadOpen}
+        onClose={() => setIsImageUploadOpen(false)}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Change Profile Picture</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <ImageUpload onImageSelect={handleImageSelect} />
+          </ModalBody>
+          <ModalFooter>
+          <Button colorScheme="blue" onClick={handleImageUpdate}>
+              Done
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <Box mt={6}>
         <VStack spacing={4}>
           <Box
@@ -395,6 +488,10 @@ const ProfilePage = () => {
           >
             Delete Account
           </Button>
+          <Box position="fixed" bottom="0" width="100%" overflow="hidden">
+            <NavBar />
+          </Box>
+
           {/* Delete Confirmation Dialog */}
           <AlertDialog
             isOpen={isDeleteDialogOpen}

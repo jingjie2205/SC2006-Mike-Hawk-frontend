@@ -92,7 +92,7 @@ function LocationPicker({ onLocationChange }) {
 
   return (
     <div className="map-container">
-      <Button colorScheme="teal" onClick={handleGetLocation} mt={4} mb={4}>
+      <Button colorScheme="teal" onClick={handleGetLocation} alignContent="center" mt={4} mb={4}>
         Get My Location
       </Button>
       <MapContainer center={position} zoom={15} scrollWheelZoom={true} width="80%">

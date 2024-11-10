@@ -10,7 +10,6 @@ import {
 } from "@chakra-ui/react";
 
 function MyRewardsCard({ rewardID, expiry, giftcode }) {
-  console.log(rewardID);
   const [image, setImage] = useState(""); // State to store the fetched image URL
   const [reward, setReward] = useState({});
   const [error, setError] = useState(""); // State to store error messages
@@ -103,7 +102,7 @@ function MyRewardsCard({ rewardID, expiry, giftcode }) {
           className="text-container"
         >
           <Text>{reward.description || "Reward Description"}</Text>
-          <Text size="sm">Expiry: {expiry ? convertExpiry(expiry) : "No Expiry"}</Text>
+          <Text fontSize="md">Expiry: {expiry ? convertExpiry(expiry) : "No Expiry"}</Text>
         </Box>
       </CardBody>
     </Card>

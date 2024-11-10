@@ -84,7 +84,6 @@ function UserMyReport() {
 
   return (
     <div>
-      <NavBar />
 
       {error && (
         <Box bg="red.100" p="4" mb="4" borderRadius="md">
@@ -178,7 +177,7 @@ function UserMyReport() {
         Past Reports
       </Text>
 
-      <VStack bg="white" align="center">
+      <VStack bg="white" align="center" mb="60px">
         {sortedReports.filter((report) => report.status === "Resolved").length === 0 ? (
           <Box bg="#dddddd" w="80%" margin="3% 0" padding="3%">
             <Text fontWeight={"400"} fontSize={"120%"}>
@@ -197,6 +196,10 @@ function UserMyReport() {
             ))
         )}
       </VStack>
+      <Box mb="60px"/>
+      <Box position="fixed" bottom="0" width="100%" overflow="hidden">
+        <NavBar />
+      </Box>
     </div>
   );
 }
