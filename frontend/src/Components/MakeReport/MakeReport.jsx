@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";  // Import useNavigate for redirect
 import ImageUpload from "./ImageUpload";
 import LocationPicker from "./LocationPicker";
 import "react-datetime-picker/dist/DateTimePicker.css";
@@ -18,6 +18,7 @@ function MakeReport() {
   const [imageFile, setImageFile] = useState(null);
   const [title, setTitle] = useState(""); // Added title state
   const toast = useToast(); // Hook for toast notifications
+  const navigate = useNavigate(); // Hook for navigation
 
   const handleImageSelect = (file) => {
     setImageFile(file);
@@ -89,9 +90,27 @@ function MakeReport() {
         formData, 
         { headers: { "Content-Type": "multipart/form-data" } } // Make sure headers are set correctly for file upload
       );
-      console.log("Report submitted successfully:", response);
+      
+      // Show success toast
+      toast({
+        title: "Report Submitted",
+        description: "Your report has been successfully submitted.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+
+      // Redirect to the main page (adjust the path as needed)
+      navigate("/userdashboard"); // Adjust to your actual main page path
     } catch (error) {
       console.error("Error submitting report:", error);
+      toast({
+        title: "Submission Failed",
+        description: "There was an error submitting your report. Please try again.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 

@@ -7,12 +7,22 @@ import {
   Image,
   CardBody,
   useToast,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  Button,
 } from "@chakra-ui/react";
+import { QRCode } from 'react-qrcode-logo';
 
 function MyRewardsCard({ rewardID, expiry, giftcode }) {
   const [image, setImage] = useState(""); // State to store the fetched image URL
   const [reward, setReward] = useState({});
   const [error, setError] = useState(""); // State to store error messages
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to control the modal visibility
   const toast = useToast();
 
   // Fetch reward details from the database
@@ -43,24 +53,24 @@ function MyRewardsCard({ rewardID, expiry, giftcode }) {
   // Fetch image URL based on reward description
   useEffect(() => {
     const fetchImage = async () => {
-        try {
-          const response = await axios.get(
-            `http://127.0.0.1:8000/rewards/rewards/${rewardID}/image`,
-            { responseType: 'blob' }
-          );
-          if (response.headers['content-type'].includes('image/png')) {
-            const imageUrl = URL.createObjectURL(response.data);
-            setImage(imageUrl);
-          } else {
-            console.error("Fetched content is not an image");
-          }
-        } catch (error) {
-          console.error("Error fetching image:", error);
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/rewards/rewards/${rewardID}/image`,
+          { responseType: 'blob' }
+        );
+        if (response.headers['content-type'].includes('image/png')) {
+          const imageUrl = URL.createObjectURL(response.data);
+          setImage(imageUrl);
+        } else {
+          console.error("Fetched content is not an image");
         }
-      };
+      } catch (error) {
+        console.error("Error fetching image:", error);
+      }
+    };
 
-      fetchImage();
-    }, [reward.description]);
+    fetchImage();
+  }, [reward.description]);
 
   // Convert expiry date from Unix timestamp
   const convertExpiry = (unixTimestamp) => {
@@ -73,39 +83,71 @@ function MyRewardsCard({ rewardID, expiry, giftcode }) {
     });
   };
 
+  // Open the modal to display the QR code
+  const handleCardClick = () => {
+    setIsModalOpen(true);
+  };
+
+  // Close the modal
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
-    <Card
-      width={"100%"}
-      height={"200px"}
-      className="rewards-card"
-      backgroundColor="#dddddd"
-      mb="5%"
-    >
-      <CardBody
+    <>
+      <Card
         width={"100%"}
         height={"200px"}
-        display="flex"
-        alignItems={"center"}
+        className="rewards-card"
+        backgroundColor="#dddddd"
+        mb="5%"
+        onClick={handleCardClick} // Trigger modal on card click
       >
-        <Image
-          src={image || "default-image-url.png"} // Use a default image if none provided
-          width="100px"
-          height="90px"
-          rounded={3}
-          alignContent={"center"}
-          ml="3%"
-          alt={reward.description || "Reward Image"}
-        />
-        <Box
-          justifyContent="space-between"
-          width={"500px"}
-          className="text-container"
+        <CardBody
+          width={"100%"}
+          height={"200px"}
+          display="flex"
+          alignItems={"center"}
         >
-          <Text>{reward.description || "Reward Description"}</Text>
-          <Text fontSize="md">Expiry: {expiry ? convertExpiry(expiry) : "No Expiry"}</Text>
-        </Box>
-      </CardBody>
-    </Card>
+          <Image
+            src={image || "default-image-url.png"} // Use a default image if none provided
+            width="100px"
+            height="90px"
+            rounded={3}
+            alignContent={"center"}
+            ml="3%"
+            alt={reward.description || "Reward Image"}
+          />
+          <Box
+            justifyContent="space-between"
+            width={"500px"}
+            className="text-container"
+          >
+            <Text>{reward.description || "Reward Description"}</Text>
+            <Text fontSize="md">Expiry: {expiry ? convertExpiry(expiry) : "No Expiry"}</Text>
+          </Box>
+        </CardBody>
+      </Card>
+
+      {/* Modal to display QR code */}
+      <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
+        <ModalOverlay />
+        <ModalContent width="80%" maxWidth="80%">
+          <ModalHeader>Gift Code QR</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Box textAlign="center">
+              <QRCode value={giftcode || "No Gift Code Available"} size={256} />
+            </Box>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" onClick={handleCloseModal}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
   );
 }
 

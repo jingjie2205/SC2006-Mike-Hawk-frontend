@@ -82,20 +82,28 @@ function ReportDetail() {
     <Box minHeight="100vh">
       <Box p={6} mb="60px">
         <VStack align="start" spacing={5}>
-          {/* Display main image */}
-          <Box w="100%">
+          {/* Display report details */}
+          <Box w="100%" bg="#E2E8F0" p={4} borderRadius="md">
             <Text fontWeight="bold" mb={2}>
-              Picture:
+              Title
             </Text>
-            <Image src={image} alt="Report Image" borderRadius="md" />
+            <Text>{report.title}</Text>
           </Box>
-
+          
           {/* Display report details */}
           <Box w="100%" bg="#E2E8F0" p={4} borderRadius="md">
             <Text fontWeight="bold" mb={2}>
               Details of the issue:
             </Text>
             <Text>{report.description}</Text>
+          </Box>
+          
+          {/* Display main image */}
+          <Box width="100%">
+            <Text fontWeight="bold" mb={2}>
+              Picture:
+            </Text>
+            <Image width="100%"src={image} alt="Report Image" borderRadius="md" />
           </Box>
 
           {/* Display location map with Leaflet */}

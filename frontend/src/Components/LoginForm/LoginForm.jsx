@@ -153,6 +153,12 @@ function LoginForm() {
     }
   };
 
+   // Detect "Enter" key press to trigger login
+   const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSubmit(e);
+    }
+  };
 
   return (
     <Box
@@ -212,6 +218,7 @@ function LoginForm() {
               type="password"
               rounded={20}
               onChange={handlePassword}
+              onKeyPress={handleKeyPress} // Detect Enter key on username input
             />
             <FaLock className="icon" />
           </div>
@@ -222,6 +229,7 @@ function LoginForm() {
             colorScheme="blue"
             width="full"
             onClick={handleSubmit}
+            onKeyPress={handleKeyPress} // Detect Enter key on username input
           >
             Login
           </Button>
