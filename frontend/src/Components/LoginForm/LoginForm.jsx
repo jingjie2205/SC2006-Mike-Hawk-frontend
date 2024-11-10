@@ -3,7 +3,14 @@ import { FaUser, FaLock } from "react-icons/fa";
 import "./LoginForm.css";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import axios from "axios";
-import { Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton } from '@chakra-ui/react';
+import config from "../../config";
+import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  CloseButton,
+} from "@chakra-ui/react";
 
 import {
   Box,
@@ -36,14 +43,15 @@ function LoginForm() {
   const { isOpen, onOpen, onClose } = useDisclosure(); // Control modal visibility
   const [errorMessage, setErrorMessage] = useState(null); // State to store error message
   const [isVerificationSuccess, setIsVerificationSuccess] = useState(false);
-  
+  const toast = useToast();
+
   const location = useLocation();
-  
+
   useEffect(() => {
     // Check if there's a verification code in the URL params
     const params = new URLSearchParams(location.search);
     const verificationCode = params.get("verification_key");
-    
+
     if (verificationCode) {
       // Verify user on the backend using the verification code
       verifyUser(verificationCode);
@@ -59,15 +67,27 @@ function LoginForm() {
   };
 
   const handleSubmit = async (e) => {
+    // Check if fields are empty
+    if (!name || !pw) {
+      toast({
+        title: "Missing Fields",
+        description: "Please fill out both the username and password fields.",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+      });
+      return; // Stop further execution if fields are empty
+    }
+
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/public/public/login",
+        `${config.baseURL}/public/public/login`,
         {
           username: name,
           password: pw,
         }
       );
-      
+
       if (response.status === 200) {
         localStorage.setItem("authToken", response.data.token);
         localStorage.setItem("userId", response.data.user_id);
@@ -83,33 +103,37 @@ function LoginForm() {
           window.location.href = "/userdashboard"; // Redirect to user dashboard
         }
       } else {
-        setErrorMessage("Invalid Credentials");
+        toast({
+          title: "Invalid Credentials",
+          description: "The username or password you entered is incorrect.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
       }
     } catch (error) {
-      if (error.response) {
-        if (error.response.status !== 200) {
-          setErrorMessage("Invalid Credentials");
-        } else {
-          setErrorMessage(`Error: ${error.response.status} - ${error.response.statusText}`);
-        }
-      } else if (error.request) {
-        setErrorMessage("No response from the server.");
-      } else {
-        setErrorMessage("Error setting up the request: " + error.message);
-      }
+      toast({
+        title: "Invalid Credentials",
+        description: "The username or password you entered is incorrect.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
   const verifyUser = async (verificationCode) => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/public/public/verify/${verificationCode}`,
+        `${config.baseURL}/public/public/verify/${verificationCode}`
       );
       if (response.status === 200) {
         setIsVerificationSuccess(true);
         setErrorMessage(null);
       } else {
-        setErrorMessage("Verification failed. Please check your link and try again.");
+        setErrorMessage(
+          "Verification failed. Please check your link and try again."
+        );
       }
     } catch (error) {
       setErrorMessage("Error verifying the email. Please try again.");
@@ -119,7 +143,7 @@ function LoginForm() {
   const handlePasswordReset = async () => {
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/public/public/password-reset-request",
+        `${config.baseURL}/public/public/password-reset-request`,
         { email: resetEmail }
       );
 
@@ -153,9 +177,9 @@ function LoginForm() {
     }
   };
 
-   // Detect "Enter" key press to trigger login
-   const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
+  // Detect "Enter" key press to trigger login
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
       handleSubmit(e);
     }
   };
@@ -181,13 +205,18 @@ function LoginForm() {
         bg="white"
       >
         <Image src="./public/RQ.png" alt="ReportQuest Logo" rounded={10} />
-        
+
         {/* Error message box */}
         {errorMessage && (
           <Alert status="error" mt={2}>
             <AlertIcon />
             <AlertTitle mr={2}>Error</AlertTitle>
-            <CloseButton position="absolute" right="8px" top="8px" onClick={() => setErrorMessage(null)} />
+            <CloseButton
+              position="absolute"
+              right="8px"
+              top="8px"
+              onClick={() => setErrorMessage(null)}
+            />
           </Alert>
         )}
 
@@ -196,7 +225,12 @@ function LoginForm() {
           <Alert status="success" mt={2}>
             <AlertIcon />
             <AlertTitle>Verification Successful!</AlertTitle>
-            <CloseButton position="absolute" right="8px" top="8px" onClick={() => setIsVerificationSuccess(false)} />
+            <CloseButton
+              position="absolute"
+              right="8px"
+              top="8px"
+              onClick={() => setIsVerificationSuccess(false)}
+            />
           </Alert>
         )}
 
@@ -267,7 +301,9 @@ function LoginForm() {
           <ModalHeader>Reset Password</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Text mb={4}>Enter your email address to receive a password reset link.</Text>
+            <Text mb={4}>
+              Enter your email address to receive a password reset link.
+            </Text>
             <Input
               placeholder="Email Address"
               value={resetEmail}

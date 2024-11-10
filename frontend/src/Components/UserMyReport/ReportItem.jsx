@@ -1,6 +1,7 @@
-import React, { useEffect, useState }from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Box, Text, Image } from "@chakra-ui/react";
+import config from "../../config";
 
 function ReportItem({ report, onClick }) {
   const reportID = report.report_id;
@@ -13,12 +14,13 @@ function ReportItem({ report, onClick }) {
     const fetchImage = async () => {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/reports/reports/reportPicture/${reportID}`, {
-            responseType: 'blob'
+          `${config.baseURL}/reports/reports/reportPicture/${reportID}`,
+          {
+            responseType: "blob",
           }
         );
         // Check if content is an image
-        if (response.headers['content-type'].includes('image/png')) {
+        if (response.headers["content-type"].includes("image/png")) {
           // Convert blob to an object URL
           const imageUrl = URL.createObjectURL(response.data);
           setImage(imageUrl);
@@ -32,8 +34,8 @@ function ReportItem({ report, onClick }) {
 
     fetchImage();
   }, [reportID]);
-  
-  return (  
+
+  return (
     <Box
       onClick={onClick}
       key={report.report_id}

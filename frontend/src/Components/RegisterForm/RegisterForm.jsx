@@ -93,7 +93,7 @@ const RegisterForm = () => {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/public/public/register",
+        `${config.baseURL}/public/public/register`,
         {
           userName: name,
           password: password,

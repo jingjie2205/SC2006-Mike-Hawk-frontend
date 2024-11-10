@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import config from "../../config";
 import {
   Box,
   Card,
@@ -16,7 +17,7 @@ import {
   ModalFooter,
   Button,
 } from "@chakra-ui/react";
-import { QRCode } from 'react-qrcode-logo';
+import { QRCode } from "react-qrcode-logo";
 
 function MyRewardsCard({ rewardID, expiry, giftcode }) {
   const [image, setImage] = useState(""); // State to store the fetched image URL
@@ -30,7 +31,7 @@ function MyRewardsCard({ rewardID, expiry, giftcode }) {
     const fetchReward = async () => {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/rewards/rewards/${rewardID}`
+          `${config.baseURL}/rewards/rewards/${rewardID}`
         );
         if (response.status === 200) {
           setReward(response.data);
@@ -55,10 +56,10 @@ function MyRewardsCard({ rewardID, expiry, giftcode }) {
     const fetchImage = async () => {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/rewards/rewards/${rewardID}/image`,
-          { responseType: 'blob' }
+          `${config.baseURL}/rewards/rewards/${rewardID}/image`,
+          { responseType: "blob" }
         );
-        if (response.headers['content-type'].includes('image/png')) {
+        if (response.headers["content-type"].includes("image/png")) {
           const imageUrl = URL.createObjectURL(response.data);
           setImage(imageUrl);
         } else {
@@ -124,7 +125,9 @@ function MyRewardsCard({ rewardID, expiry, giftcode }) {
             className="text-container"
           >
             <Text>{reward.description || "Reward Description"}</Text>
-            <Text fontSize="md">Expiry: {expiry ? convertExpiry(expiry) : "No Expiry"}</Text>
+            <Text fontSize="md">
+              Expiry: {expiry ? convertExpiry(expiry) : "No Expiry"}
+            </Text>
           </Box>
         </CardBody>
       </Card>

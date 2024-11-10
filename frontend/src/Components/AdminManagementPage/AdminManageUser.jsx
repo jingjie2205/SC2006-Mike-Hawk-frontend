@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import config from "../../config";
 import axios from "axios";
 import {
   Box,
@@ -23,24 +24,24 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalBody,
-  ModalFooter, 
-  Button
+  ModalFooter,
+  Button,
 } from "@chakra-ui/react";
 import { FaSearch } from "react-icons/fa";
 
 function AdminManageUser() {
   const [users, setUsers] = useState([]);
-  const [searchTerm, setSearchTerm] = useState(""); 
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm); 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [isDeleteConfirm, setIsDeleteConfirm] = useState(false); 
+  const [isDeleteConfirm, setIsDeleteConfirm] = useState(false);
 
   // Fetch users from backend
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/users/users/all");
+        const response = await axios.get(`${config.baseURL}/users/users/all`);
         if (response.status === 200) {
           setUsers(response.data);
         }
@@ -91,9 +92,13 @@ function AdminManageUser() {
   // Delete user
   const handleDelete = async () => {
     try {
-      const response = await axios.delete(`http://127.0.0.1:8000/users/users/?user_id=${selectedUser?.userID}`);
+      const response = await axios.delete(
+        `${config.baseURL}/users/users/?user_id=${selectedUser?.userID}`
+      );
       if (response.status === 200) {
-        setUsers((prevUsers) => prevUsers.filter((user) => user.userID !== selectedUser?.userID));
+        setUsers((prevUsers) =>
+          prevUsers.filter((user) => user.userID !== selectedUser?.userID)
+        );
         closeModal();
       } else {
         alert("Failed to delete user.");
@@ -108,18 +113,20 @@ function AdminManageUser() {
     try {
       const updatedUser = {
         userName: selectedUser.userName,
-        emailAddress: selectedUser.emailAddress
+        emailAddress: selectedUser.emailAddress,
       };
 
       const response = await axios.put(
-        `http://127.0.0.1:8000/users/users/${selectedUser.userID}/update/`,
+        `${config.baseURL}/users/users/${selectedUser.userID}/update/`,
         updatedUser
       );
 
       if (response.status === 200) {
         setUsers((prevUsers) =>
           prevUsers.map((user) =>
-            user.userID === selectedUser.userID ? { ...user, ...updatedUser } : user
+            user.userID === selectedUser.userID
+              ? { ...user, ...updatedUser }
+              : user
           )
         );
         closeModal();
@@ -154,7 +161,15 @@ function AdminManageUser() {
         />
       </HStack>
 
-      <Text fontWeight="500" mt="3%" ml="5%" mb="3%" fontSize="100%" align="left" color="black">
+      <Text
+        fontWeight="500"
+        mt="3%"
+        ml="5%"
+        mb="3%"
+        fontSize="100%"
+        align="left"
+        color="black"
+      >
         User List:
       </Text>
 
@@ -169,7 +184,11 @@ function AdminManageUser() {
           <Tbody>
             {filteredUsers.length > 0 ? (
               filteredUsers.map((user) => (
-                <Tr key={user.userID} onClick={() => openModal(user)} _hover={{ bg: "gray.100", cursor: "pointer" }}>
+                <Tr
+                  key={user.userID}
+                  onClick={() => openModal(user)}
+                  _hover={{ bg: "gray.100", cursor: "pointer" }}
+                >
                   <Td>{user.userName}</Td>
                   <Td>{user.emailAddress}</Td>
                 </Tr>

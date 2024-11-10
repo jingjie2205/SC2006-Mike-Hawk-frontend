@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
+import config from "../../config";
 import axios from "axios";
 import NavBar from "../../Common/NavBar";
 import { Box, Text, Input, VStack, IconButton, HStack } from "@chakra-ui/react";
@@ -26,7 +27,7 @@ function UserMyReport() {
     const fetchUserReports = async () => {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/reports/reports/user/${userId}`
+          `${config.baseURL}/reports/reports/user/${userId}`
         );
         if (response.status === 200) {
           setReports(response.data);
@@ -84,7 +85,6 @@ function UserMyReport() {
 
   return (
     <div>
-
       {error && (
         <Box bg="red.100" p="4" mb="4" borderRadius="md">
           <Text color="red.700">{error}</Text>
@@ -147,16 +147,22 @@ function UserMyReport() {
       </Text>
 
       <VStack bg="white" align="center">
-        {sortedReports.filter((report) => report.status === "In Progress" || report.status === "Pending").length === 0 ? (
+        {sortedReports.filter(
+          (report) =>
+            report.status === "In Progress" || report.status === "Pending"
+        ).length === 0 ? (
           <Box bg="#dddddd" w="80%" margin="3% 0" padding="3%">
             <Text fontWeight={"400"} fontSize={"120%"}>
               No reports found
             </Text>
           </Box>
         ) : (
-            sortedReports
-              .filter((report) => report.status === "In Progress" || report.status === "Pending")
-              .map((report) => (
+          sortedReports
+            .filter(
+              (report) =>
+                report.status === "In Progress" || report.status === "Pending"
+            )
+            .map((report) => (
               <ReportItem
                 key={report.report_id}
                 report={report}
@@ -178,7 +184,8 @@ function UserMyReport() {
       </Text>
 
       <VStack bg="white" align="center">
-        {sortedReports.filter((report) => report.status === "Resolved").length === 0 ? (
+        {sortedReports.filter((report) => report.status === "Resolved")
+          .length === 0 ? (
           <Box bg="#dddddd" w="80%" margin="3% 0" padding="3%">
             <Text fontWeight={"400"} fontSize={"120%"}>
               No reports found

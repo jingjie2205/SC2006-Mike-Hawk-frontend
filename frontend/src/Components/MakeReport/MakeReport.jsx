@@ -1,12 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { Link as RouterLink, useNavigate } from "react-router-dom";  // Import useNavigate for redirect
+import { Link as RouterLink, useNavigate } from "react-router-dom"; // Import useNavigate for redirect
 import ImageUpload from "./ImageUpload";
 import LocationPicker from "./LocationPicker";
 import "react-datetime-picker/dist/DateTimePicker.css";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
 import DateTimePicker from "react-datetime-picker";
-import { Textarea, Box, Button, VStack, Text, Input, useToast } from "@chakra-ui/react";
+import config from "../../config";
+import {
+  Textarea,
+  Box,
+  Button,
+  VStack,
+  Text,
+  Input,
+  useToast,
+} from "@chakra-ui/react";
 import NavBar from "../../Common/NavBar";
 import axios from "axios";
 
@@ -45,7 +54,7 @@ function MakeReport() {
       });
       return;
     }
-    
+
     // Ensure location is set before submitting
     if (!location) {
       toast({
@@ -79,18 +88,18 @@ function MakeReport() {
     formData.append("longitude", parseFloat(location[1].toString())); // Ensure it's a number
     formData.append("latitude", parseFloat(location[0].toString())); // Ensure it's a number
     formData.append("incident_time", epochTime);
-    
+
     if (imageFile) {
       formData.append("image", imageFile); // Append the image if it's selected
     }
-  
+
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/reports/reports/submit-report/",
-        formData, 
+        `${config.baseURL}/reports/reports/submit-report/`,
+        formData,
         { headers: { "Content-Type": "multipart/form-data" } } // Make sure headers are set correctly for file upload
       );
-      
+
       // Show success toast
       toast({
         title: "Report Submitted",
@@ -106,7 +115,8 @@ function MakeReport() {
       console.error("Error submitting report:", error);
       toast({
         title: "Submission Failed",
-        description: "There was an error submitting your report. Please try again.",
+        description:
+          "There was an error submitting your report. Please try again.",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -143,7 +153,7 @@ function MakeReport() {
           onChange={(e) => setTitle(e.target.value)} // Handling title change
           mb="4"
         />
-        
+
         <Text>Description:</Text>
         <Textarea
           placeholder="Provide Details Of The Issue"
@@ -154,11 +164,10 @@ function MakeReport() {
           onChange={(e) => setDescription(e.target.value)}
           mb="4"
         />
-        
+
         <Text>Image:</Text>
         <ImageUpload onImageSelect={handleImageSelect} />
-        
-        
+
         <Box position="relative" paddingTop={5} paddingBottom={5}>
           <Text>Time:</Text>
           <DateTimePicker
@@ -181,7 +190,13 @@ function MakeReport() {
           Submit
         </Button>
       </Box>
-      <Box position="fixed" bottom="0" width="100%" overflow="hidden" zIndex="1000">
+      <Box
+        position="fixed"
+        bottom="0"
+        width="100%"
+        overflow="hidden"
+        zIndex="1000"
+      >
         <NavBar />
       </Box>
     </div>

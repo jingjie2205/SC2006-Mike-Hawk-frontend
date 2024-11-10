@@ -51,7 +51,7 @@ function PasswordResetForm() {
       console.log(token);
       console.log(newPassword)
         const response = await axios.post(
-        "http://127.0.0.1:8000/public/public/password-reset", {
+        `${config.baseURL}/public/public/password-reset`, {
             verification_key: token,
             new_password: newPassword
         }

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 import NavBar from "../../Common/NavBar";
 import axios from "axios";
+import config from "../../config";
 import {
   Box,
   Button,
@@ -65,7 +66,8 @@ const ProfilePage = () => {
     const fetchUserData = async () => {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/users/users/?user_id=${userId}`
+          `${config.baseURL}/users/users/?user_id=${userId}`,
+          { headers: { "ngrok-skip-browser-warning": "true" } }
         );
         if (response.status === 200) {
           setUser(response.data); // Assuming response contains { userID, userName, emailAddress, ... }
@@ -83,9 +85,10 @@ const ProfilePage = () => {
   useEffect(() => {
     // Fetch image URL based on userId
     const fetchImage = async () => {
+      console.log(`${config.baseURL}/users/users/profilePicture/${userId}`);
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/users/users/profilePicture/${userId}`,
+          `${config.baseURL}/users/users/profilePicture/${userId}`,
           {
             responseType: "blob",
           }
@@ -120,7 +123,7 @@ const ProfilePage = () => {
 
       try {
         const response = await axios.post(
-          `http://127.0.0.1:8000/users/users/profilePicture/${userId}`,
+          `${config.baseURL}/users/users/profilePicture/${userId}`,
           formData,
           {
             headers: {
@@ -150,7 +153,8 @@ const ProfilePage = () => {
         console.error("Error uploading profile picture:", error);
         toast({
           title: "Error",
-          description: "An error occurred while uploading your profile picture.",
+          description:
+            "An error occurred while uploading your profile picture.",
           status: "error",
           duration: 5000,
           isClosable: true,
@@ -191,7 +195,7 @@ const ProfilePage = () => {
       };
 
       const response = await axios.put(
-        `http://127.0.0.1:8000/users/users/${user.userID}/update/`,
+        `${config.baseURL}/users/users/${user.userID}/update/`,
         updatedUser
       );
 
@@ -232,7 +236,7 @@ const ProfilePage = () => {
     try {
       // Send a request to the backend to trigger a password reset email
       const response = await axios.post(
-        "http://127.0.0.1:8000/public/public/password-reset-request",
+        `${config.baseURL}/public/public/password-reset-request`,
         {
           email: user.emailAddress,
         }
@@ -294,7 +298,7 @@ const ProfilePage = () => {
   const handleDeleteAccount = async () => {
     try {
       const response = await axios.delete(
-        `http://127.0.0.1:8000/users/users/?user_id=${userId}`
+        `${config.baseURL}/users/users/?user_id=${userId}`
       );
       if (response.status === 200) {
         // Clear user data from local storage
@@ -361,7 +365,7 @@ const ProfilePage = () => {
             <ImageUpload onImageSelect={handleImageSelect} />
           </ModalBody>
           <ModalFooter>
-          <Button colorScheme="blue" onClick={handleImageUpdate}>
+            <Button colorScheme="blue" onClick={handleImageUpdate}>
               Done
             </Button>
           </ModalFooter>

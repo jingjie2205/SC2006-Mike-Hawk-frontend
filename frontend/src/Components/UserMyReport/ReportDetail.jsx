@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import config from "../../config";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Box, Text, VStack, Image, Button, Input } from "@chakra-ui/react";
 import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
@@ -57,7 +58,7 @@ function ReportDetail() {
     const fetchImage = async () => {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/reports/reports/reportPicture/${reportID}`,
+          `${config.baseURL}/reports/reports/reportPicture/${reportID}`,
           {
             responseType: "blob",
           }
@@ -89,7 +90,7 @@ function ReportDetail() {
             </Text>
             <Text>{report.title}</Text>
           </Box>
-          
+
           {/* Display report details */}
           <Box w="100%" bg="#E2E8F0" p={4} borderRadius="md">
             <Text fontWeight="bold" mb={2}>
@@ -97,13 +98,18 @@ function ReportDetail() {
             </Text>
             <Text>{report.description}</Text>
           </Box>
-          
+
           {/* Display main image */}
           <Box width="100%">
             <Text fontWeight="bold" mb={2}>
               Picture:
             </Text>
-            <Image width="100%"src={image} alt="Report Image" borderRadius="md" />
+            <Image
+              width="100%"
+              src={image}
+              alt="Report Image"
+              borderRadius="md"
+            />
           </Box>
 
           {/* Display location map with Leaflet */}
@@ -143,7 +149,13 @@ function ReportDetail() {
           )}
         </VStack>
       </Box>
-      <Box position="fixed" bottom="0" width="100%" overflow="hidden" zIndex="1000">
+      <Box
+        position="fixed"
+        bottom="0"
+        width="100%"
+        overflow="hidden"
+        zIndex="1000"
+      >
         <NavBar />
       </Box>
     </Box>

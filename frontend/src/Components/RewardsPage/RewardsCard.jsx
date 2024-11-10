@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import config from "../../config";
 import {
   Box,
   Card,
@@ -42,7 +43,6 @@ function RewardsCard({
   const [image, setImage] = useState(""); // State to store the fetched image URL
   const userId = localStorage.getItem("userId"); // Fetch userId from local storage
 
-
   const {
     isOpen: isRedemptionOpen,
     onOpen: onRedemptionOpen,
@@ -63,48 +63,49 @@ function RewardsCard({
   });
 
   const handleRedemption = async () => {
-      try {
-        // post the request to redeem reward to the backend
-        const response = await axios.post(`http://127.0.0.1:8000/rewards/rewards/claim/${rewardID}?user_id=${userId}`);
-  
-        if (response.status === 200) {
-          toast({
-            title: "Redemption Successful!",
-            description: `You have redeemed ${description} for ${pointsRequired} points!`,
-            status: "success",
-            duration: 5000,
-            isClosable: true,
-          });
-          onRedemptionClose();
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
-        }
-        else if (response.status === 403) {
-          toast({
-            title: "Insufficient Points",
-            description: "You do not have enough points to redeem this reward!",
-            status: "error",
-            duration: 5000,
-            isClosable: true,
-          });
-          onRedemptionClose();
-        }
-        else {
-          throw new Error("Failed to redeem");
-        }
-      } catch (error) {
-        console.error("Error updating points:", error);
+    try {
+      // post the request to redeem reward to the backend
+      const response = await axios.post(
+        `${config.baseURL}/rewards/rewards/claim/${rewardID}?user_id=${userId}`
+      );
+
+      if (response.status === 200) {
         toast({
-          title: "Redemption Failed",
-          description: "There was an error updating your points. Please try again later.",
+          title: "Redemption Successful!",
+          description: `You have redeemed ${description} for ${pointsRequired} points!`,
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+        onRedemptionClose();
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } else if (response.status === 403) {
+        toast({
+          title: "Insufficient Points",
+          description: "You do not have enough points to redeem this reward!",
           status: "error",
           duration: 5000,
           isClosable: true,
         });
         onRedemptionClose();
+      } else {
+        throw new Error("Failed to redeem");
       }
-    };
+    } catch (error) {
+      console.error("Error updating points:", error);
+      toast({
+        title: "Redemption Failed",
+        description:
+          "There was an error updating your points. Please try again later.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      onRedemptionClose();
+    }
+  };
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
@@ -115,15 +116,15 @@ function RewardsCard({
     try {
       // Make a PUT request to update the reward details
       const response = await axios.put(
-        `http://127.0.0.1:8000/rewards/rewards/update/${rewardID}`,
+        `${config.baseURL}/rewards/rewards/update/${rewardID}`,
         {
           description: editedVoucher.description,
           pointsRequired: editedVoucher.pointsRequired,
           validity: 999,
-          availability: 999
+          availability: 999,
         }
       );
-  
+
       if (response.status === 200) {
         // Show success toast
         toast({
@@ -132,7 +133,7 @@ function RewardsCard({
           status: "success",
           duration: 5000,
           isClosable: true,
-        });        
+        });
         onUpdate();
         // Close the edit popover
         onEditClose();
@@ -143,7 +144,8 @@ function RewardsCard({
       console.error("Error updating reward:", error);
       toast({
         title: "Update Failed",
-        description: "There was an error updating the reward. Please try again.",
+        description:
+          "There was an error updating the reward. Please try again.",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -156,12 +158,13 @@ function RewardsCard({
     const fetchImage = async () => {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/rewards/rewards/${rewardID}/image`, {
-            responseType: 'blob'
+          `${config.baseURL}/rewards/rewards/${rewardID}/image`,
+          {
+            responseType: "blob",
           }
         );
         // Check if content is an image
-        if (response.headers['content-type'].includes('image/png')) {
+        if (response.headers["content-type"].includes("image/png")) {
           // Convert blob to an object URL
           const imageUrl = URL.createObjectURL(response.data);
           setImage(imageUrl);

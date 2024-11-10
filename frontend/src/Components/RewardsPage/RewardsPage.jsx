@@ -3,7 +3,16 @@ import axios from "axios";
 import NavBar from "../../Common/NavBar";
 import RewardsCard from "./RewardsCard";
 import { Link } from "react-router-dom";
-import { Button, Box, Text, Stat, StatLabel, StatNumber, VStack } from "@chakra-ui/react";
+import config from "../../config";
+import {
+  Button,
+  Box,
+  Text,
+  Stat,
+  StatLabel,
+  StatNumber,
+  VStack,
+} from "@chakra-ui/react";
 
 function RewardsPage() {
   const [rewards, setRewards] = useState([]);
@@ -15,7 +24,9 @@ function RewardsPage() {
   useEffect(() => {
     const fetchUserPoints = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/users/users?user_id=${userId}`);
+        const response = await axios.get(
+          `${config.baseURL}/users/users?user_id=${userId}`
+        );
         if (response.status === 200) {
           setUserPoints(response.data.points);
         }
@@ -30,11 +41,13 @@ function RewardsPage() {
     }
   }, [userId]);
 
-   // Fetch rewards from the database
-   useEffect(() => {
+  // Fetch rewards from the database
+  useEffect(() => {
     const fetchRewards = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/rewards/rewards/all`);
+        const response = await axios.get(
+          `${config.baseURL}/rewards/rewards/all`
+        );
         if (response.status === 200) {
           const sortedRewards = response.data.sort((a, b) =>
             a.description.localeCompare(b.description)
@@ -56,7 +69,14 @@ function RewardsPage() {
           Rewards Catalogue
         </Text>
       </VStack>
-      <Box borderRadius="lg" p="4" maxW="1100px" mx="auto" bg="white" align="center">
+      <Box
+        borderRadius="lg"
+        p="4"
+        maxW="1100px"
+        mx="auto"
+        bg="white"
+        align="center"
+      >
         <Box
           borderWidth="2px"
           borderRadius="lg"
@@ -94,8 +114,8 @@ function RewardsPage() {
             />
           ))}
         </Box>
-        <Button as={Link} to="/myrewards" bg="#06ADBF" color="white" mb="60px"> 
-        My Rewards
+        <Button as={Link} to="/myrewards" bg="#06ADBF" color="white" mb="60px">
+          My Rewards
         </Button>
       </Box>
       <Box position="fixed" bottom="0" width="100%" overflow="hidden">

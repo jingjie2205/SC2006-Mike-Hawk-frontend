@@ -1,4 +1,5 @@
 import { React, useState, useEffect } from "react";
+import config from "../../config";
 import axios from "axios";
 import {
   Button,
@@ -36,7 +37,7 @@ function AdminManageRewards() {
     const fetchVouchers = async () => {
       try {
         const response = await axios.get(
-          "http://127.0.0.1:8000/rewards/rewards/all"
+          `${config.baseURL}/rewards/rewards/all`
         );
         if (response.status === 200) {
           const sortedVouchers = response.data.sort((a, b) =>
@@ -72,7 +73,7 @@ function AdminManageRewards() {
         formData.append("file", image);
         if (image) {
           const imageResponse = await axios.post(
-            "http://127.0.0.1:8000/rewards/upload_image", // Assume this is the endpoint for uploading images
+            `${config.baseURL}/rewards/upload_image`, // Assume this is the endpoint for uploading images
             formData,
             {
               headers: {
@@ -87,13 +88,13 @@ function AdminManageRewards() {
 
         // Send the new voucher details as query parameters
         const response = await axios.post(
-          `http://127.0.0.1:8000/rewards/rewards?description=${name}&pointsRequired=${points}&availability=999&validity=999&userID=${userID}`,
+          `${config.baseURL}/rewards/rewards?description=${name}&pointsRequired=${points}&availability=999&validity=999&userID=${userID}`
         );
 
         if (response.status === 201) {
           // After saving, re-fetch the vouchers to show the new one
           const fetchResponse = await axios.get(
-            "http://127.0.0.1:8000/rewards/rewards/all"
+            `${config.baseURL}/rewards/rewards/all`
           );
           if (fetchResponse.status === 200) {
             const sortedVouchers = fetchResponse.data.sort((a, b) =>
@@ -123,9 +124,7 @@ function AdminManageRewards() {
   // Define the onUpdate function to re-fetch the vouchers after an update
   const onUpdate = async () => {
     try {
-      const response = await axios.get(
-        "http://127.0.0.1:8000/rewards/rewards/all"
-      );
+      const response = await axios.get(`${config.baseURL}/rewards/rewards/all`);
       if (response.status === 200) {
         const sortedVouchers = response.data.sort((a, b) =>
           a.description.localeCompare(b.description)
@@ -181,7 +180,9 @@ function AdminManageRewards() {
             </Button>
             <Button
               colorScheme="teal"
-              onClick={() => handleSave(newVoucher.name, newVoucher.points, newVoucher.image)}
+              onClick={() =>
+                handleSave(newVoucher.name, newVoucher.points, newVoucher.image)
+              }
               isDisabled={!newVoucher.name || !newVoucher.points}
             >
               Save
