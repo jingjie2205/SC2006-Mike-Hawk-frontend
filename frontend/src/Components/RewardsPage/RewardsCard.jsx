@@ -111,14 +111,44 @@ function RewardsCard({
     setEditedVoucher((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleUpdate = () => {
-    onUpdate(editedVoucher);
-    onEditClose();
-  };
-
-  const handleDelete = () => {
-    onUpdate(editedVoucher);
-    onEditClose();
+  const handleUpdate = async () => {
+    try {
+      // Make a PUT request to update the reward details
+      const response = await axios.put(
+        `http://127.0.0.1:8000/rewards/rewards/update/${rewardID}`,
+        {
+          description: editedVoucher.description,
+          pointsRequired: editedVoucher.pointsRequired,
+          validity: 999,
+          availability: 999
+        }
+      );
+  
+      if (response.status === 200) {
+        // Show success toast
+        toast({
+          title: "Update Successful!",
+          description: "The reward details have been updated successfully.",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });        
+        onUpdate();
+        // Close the edit popover
+        onEditClose();
+      } else {
+        throw new Error("Failed to update reward details.");
+      }
+    } catch (error) {
+      console.error("Error updating reward:", error);
+      toast({
+        title: "Update Failed",
+        description: "There was an error updating the reward. Please try again.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   useEffect(() => {
@@ -216,20 +246,8 @@ function RewardsCard({
                         onChange={handleEditChange}
                       />
                     </FormControl>
-                    <FormControl>
-                      <FormLabel>Availability</FormLabel>
-                      <Input
-                        name="availability"
-                        type="number"
-                        value={editedVoucher.availability}
-                        onChange={handleEditChange}
-                      />
-                    </FormControl>
                     <Button colorScheme="teal" onClick={handleUpdate}>
                       Update
-                    </Button>
-                    <Button colorScheme="red" onClick={handleDelete}>
-                      Delete
                     </Button>
                   </Stack>
                 </FocusLock>
