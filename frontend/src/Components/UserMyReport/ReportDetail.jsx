@@ -6,148 +6,151 @@ import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
 import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
 import NavBar from "../../Common/NavBar";
 import ImageUpload from "../MakeReport/ImageUpload";
+import config from "../../config";
 
 // Component to add GeoSearchControl to the map
 function SearchControl({ provider }) {
-  const map = useMap();
+    const map = useMap();
 
-  useEffect(() => {
-    const searchControl = new GeoSearchControl({
-      provider,
-      style: "button",
-      showMarker: true,
-      retainZoomLevel: false,
-      animateZoom: true,
-    });
+    useEffect(() => {
+        const searchControl = new GeoSearchControl({
+            provider,
+            style: "button",
+            showMarker: true,
+            retainZoomLevel: false,
+            animateZoom: true,
+        });
 
-    map.addControl(searchControl);
+        map.addControl(searchControl);
 
-    return () => map.removeControl(searchControl);
-  }, [map, provider]);
+        return () => map.removeControl(searchControl);
+    }, [map, provider]);
 
-  return null;
+    return null;
 }
 
 function ReportDetail() {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const isUserAuthority = localStorage.getItem("isAuthority") === "true";
+    const location = useLocation();
+    const navigate = useNavigate();
+    const isUserAuthority = localStorage.getItem("isAuthority") === "true";
 
-  // Get the report data passed from the previous page
-  const report = location.state?.report;
-  const provider = new OpenStreetMapProvider();
+    // Get the report data passed from the previous page
+    const report = location.state?.report;
+    const provider = new OpenStreetMapProvider();
 
-  const reportID = report.report_id;
-  const [image, setImage] = useState(""); // State to store the fetched image URL
-  const dateTime = new Date(report.datetime * 1000); // Multiply by 1000 to convert seconds to milliseconds
-  const formattedDate = dateTime.toLocaleString(); // Default locale and time format
+    const reportID = report.report_id;
+    const [image, setImage] = useState(""); // State to store the fetched image URL
+    const dateTime = new Date(report.datetime * 1000); // Multiply by 1000 to convert seconds to milliseconds
+    const formattedDate = dateTime.toLocaleString(); // Default locale and time format
 
-  if (!report) {
-    navigate("/user-reports");
-    return null;
-  }
+    if (!report) {
+        navigate("/user-reports");
+        return null;
+    }
 
-  // Extract latitude and longitude from report.location
-  const [latitude, longitude] = report.location
-    .split(",")
-    .map((coord) => parseFloat(coord.trim()));
+    // Extract latitude and longitude from report.location
+    const [latitude, longitude] = report.location
+        .split(",")
+        .map((coord) => parseFloat(coord.trim()));
 
-  useEffect(() => {
-    // Fetch image URL based on reportId
-    const fetchImage = async () => {
-      try {
-        const response = await axios.get(
-          `http://127.0.0.1:8000/reports/reports/reportPicture/${reportID}`,
-          {
-            responseType: "blob",
-          }
-        );
-        // Check if content is an image
-        if (response.headers["content-type"].includes("image/png")) {
-          // Convert blob to an object URL
-          const imageUrl = URL.createObjectURL(response.data);
-          setImage(imageUrl);
-        } else {
-          console.error("Fetched content is not an image");
-        }
-      } catch (error) {
-        console.error("Error fetching image:", error);
-      }
-    };
+    useEffect(() => {
+        // Fetch image URL based on reportId
+        const fetchImage = async () => {
+            try {
+                const response = await axios.get(
+                    `http://${config.baseURL}/reports/reports/reportPicture/${reportID}`,
+                    {
+                        responseType: "blob",
+                    }
+                );
+                // Check if content is an image
+                if (response.headers["content-type"].includes("image/png")) {
+                    // Convert blob to an object URL
+                    const imageUrl = URL.createObjectURL(response.data);
+                    setImage(imageUrl);
+                } else {
+                    console.error("Fetched content is not an image");
+                }
+            } catch (error) {
+                console.error("Error fetching image:", error);
+            }
+        };
 
-    fetchImage();
-  }, [reportID]);
+        fetchImage();
+    }, [reportID]);
 
-  return (
-    <Box minHeight="100vh">
-      <Box p={6} mb="60px">
-        <VStack align="start" spacing={5}>
-          {/* Display report details */}
-          <Box w="100%" bg="#E2E8F0" p={4} borderRadius="md">
-            <Text fontWeight="bold" mb={2}>
-              Title
-            </Text>
-            <Text>{report.title}</Text>
-          </Box>
-          
-          {/* Display report details */}
-          <Box w="100%" bg="#E2E8F0" p={4} borderRadius="md">
-            <Text fontWeight="bold" mb={2}>
-              Details of the issue:
-            </Text>
-            <Text>{report.description}</Text>
-          </Box>
-          
-          {/* Display main image */}
-          <Box width="100%">
-            <Text fontWeight="bold" mb={2}>
-              Picture:
-            </Text>
-            <Image width="100%"src={image} alt="Report Image" borderRadius="md" />
-          </Box>
+    return (
+        <Box minHeight="100vh">
+            <Box p={6} mb="60px">
+                <VStack align="start" spacing={5}>
+                    {/* Display main image */}
+                    <Box w="100%">
+                        <Text fontWeight="bold" mb={2}>
+                            Picture:
+                        </Text>
+                        <Image
+                            src={image}
+                            alt="Report Image"
+                            borderRadius="md"
+                        />
+                    </Box>
 
-          {/* Display location map with Leaflet */}
-          <Box w="100%" h="400" mb="3%">
-            <Text fontWeight="bold" mb={2}>
-              Location:
-            </Text>
-            <MapContainer
-              center={[latitude, longitude]}
-              zoom={13}
-              style={{ height: "100%", width: "100%" }}
-            >
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              />
-              <Marker position={[latitude, longitude]} />
-              <SearchControl provider={provider} />
-            </MapContainer>
-          </Box>
+                    {/* Display report details */}
+                    <Box w="100%" bg="#E2E8F0" p={4} borderRadius="md">
+                        <Text fontWeight="bold" mb={2}>
+                            Details of the issue:
+                        </Text>
+                        <Text>{report.description}</Text>
+                    </Box>
 
-          {/* Display date and time */}
-          <Box w="100%" bg="#E2E8F0" p={3} borderRadius="md" mt="5%">
-            <Text fontWeight="bold">Time:</Text>
-            <Text fontSize="lg" fontWeight="medium">
-              {formattedDate}
-            </Text>
-          </Box>
+                    {/* Display location map with Leaflet */}
+                    <Box w="100%" h="400" mb="3%">
+                        <Text fontWeight="bold" mb={2}>
+                            Location:
+                        </Text>
+                        <MapContainer
+                            center={[latitude, longitude]}
+                            zoom={13}
+                            style={{ height: "100%", width: "100%" }}
+                        >
+                            <TileLayer
+                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                            />
+                            <Marker position={[latitude, longitude]} />
+                            <SearchControl provider={provider} />
+                        </MapContainer>
+                    </Box>
 
-          {/* Conditionally render post section based on user authority */}
-          {isUserAuthority && (
-            <Box w="100%">
-              <Input placeholder="Make an announcement" mb={3} />
-              <ImageUpload />
-              <Button colorScheme="blue">POST</Button>
+                    {/* Display date and time */}
+                    <Box w="100%" bg="#E2E8F0" p={3} borderRadius="md" mt="5%">
+                        <Text fontWeight="bold">Time:</Text>
+                        <Text fontSize="lg" fontWeight="medium">
+                            {formattedDate}
+                        </Text>
+                    </Box>
+
+                    {/* Conditionally render post section based on user authority */}
+                    {isUserAuthority && (
+                        <Box w="100%">
+                            <Input placeholder="Make an announcement" mb={3} />
+                            <ImageUpload />
+                            <Button colorScheme="blue">POST</Button>
+                        </Box>
+                    )}
+                </VStack>
             </Box>
-          )}
-        </VStack>
-      </Box>
-      <Box position="fixed" bottom="0" width="100%" overflow="hidden" zIndex="1000">
-        <NavBar />
-      </Box>
-    </Box>
-  );
+            <Box
+                position="fixed"
+                bottom="0"
+                width="100%"
+                overflow="hidden"
+                zIndex="1000"
+            >
+                <NavBar />
+            </Box>
+        </Box>
+    );
 }
 
 export default ReportDetail;
