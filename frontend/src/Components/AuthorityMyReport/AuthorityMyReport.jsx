@@ -8,7 +8,7 @@ import SortBy from "../UserMyReport/SortBy";
 import ReportItem from "../UserMyReport/ReportItem";
 import { useNavigate } from "react-router-dom";
 
-function UserMyReport() {
+function AuthorityMyReport() {
   const userId = localStorage.getItem("userId");
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -210,4 +210,4 @@ function UserMyReport() {
   );
 }
 
-export default UserMyReport;
+export default AuthorityMyReport;

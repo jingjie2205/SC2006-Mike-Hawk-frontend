@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios"; // Import axios
 import NavBar from "../../Common/NavBar";
 import {
   Text,
@@ -13,33 +14,13 @@ import {
 import { FaSearch } from "react-icons/fa";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 import Post from "./Post";
-
-// Sample post data
-const postsData = [
-  {
-    id: 1,
-    authority: "Jurong Fire Station",
-    authorityimage: "src/Assets/FireStation.png",
-    description:
-      "We regret to inform our community that the fire alarm system at Jurong Point Mall is currently not functioning due to a technical issue. Our team is working urgently to restore it to full operation. In the meantime, please remain vigilant and report any emergencies directly to 995. Your safety is our top priority, and we will update you as soon as the issue is resolved.",
-    image: "src/Assets/FireAlarm.jpg",
-    timestamp: "10:45 AM",
-  },
-  {
-    id: 2,
-    authority: "Jurong Fire Station",
-    authorityimage: "src/Assets/FireStation.png",
-    description:
-      "A fire drill will take place on November 1st at 2 PM. Please ensure all procedures are followed.",
-    image: "src/Assets/FireDrill.png",
-    timestamp: "09:00 AM",
-  },
-];
+import config from "../../config"; // Assuming you have a config for the API base URL
 
 function UserDashboard() {
   const [searchTerm, setSearchTerm] = useState(""); // State for search input
   const [debouncedTerm, setDebouncedTerm] = useState(searchTerm); // Debounced search term
-  const [filteredPosts, setFilteredReports] = useState(postsData); // State for filtered reports
+  const [filteredPosts, setFilteredPosts] = useState([]); // State for filtered posts
+  const [postsData, setPostsData] = useState([]); // State for all fetched posts
 
   // Effect to update the debounced search term with a delay
   useEffect(() => {
@@ -52,15 +33,29 @@ function UserDashboard() {
     };
   }, [searchTerm]);
 
-  // Effect to filter reports based on the debounced search term
+  // Effect to filter posts based on the debounced search term
   useEffect(() => {
     const filtered = postsData.filter(
       (post) =>
         post.description.toLowerCase().includes(debouncedTerm.toLowerCase()) ||
-        post.authority.toLowerCase().includes(debouncedTerm.toLowerCase())
+        post.authority_name.toLowerCase().includes(debouncedTerm.toLowerCase())
     );
-    setFilteredReports(filtered);
-  }, [debouncedTerm]);
+    setFilteredPosts(filtered);
+  }, [debouncedTerm, postsData]);
+
+  // Fetch posts data from the backend
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await axios.get(`${config.baseURL}/posts/posts/posts/`);
+        setPostsData(response.data); // Set posts data in state
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      }
+    };
+
+    fetchPosts();
+  }, []);
 
   return (
     <div vw="100%">
@@ -104,9 +99,9 @@ function UserDashboard() {
         </HStack>
       </VStack>
 
-      {/* Render filtered reports */}
+      {/* Render filtered posts */}
       {filteredPosts.map((post) => (
-        <Post key={post.id} post={post} vw="100vw"/>
+        <Post key={post.post_id} post={post} vw="100vw" />
       ))}
       <Box mb="60px" />
       <Box position="fixed" bottom="0" width="100%" overflow="hidden">
