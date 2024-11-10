@@ -2,7 +2,7 @@ import { React, useState, useEffect } from "react";
 import { FaEnvelope } from "react-icons/fa";
 import axios from "axios";
 import config from "../../config";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Alert, AlertIcon, AlertTitle, CloseButton } from '@chakra-ui/react';
 import {
   Box,
@@ -60,6 +60,11 @@ function PasswordResetForm() {
       if (response.status === 200) {
         setSuccessMessage("Password reset successfully.");
         setErrorMessage(null); // Clear any previous error
+
+        // Redirect to the login page after a short delay
+        setTimeout(() => {
+          navigate("/login");
+        }, 2000); // Redirect after 2 seconds
       } else {
         setErrorMessage("Error resetting password. Please try again.");
       }
