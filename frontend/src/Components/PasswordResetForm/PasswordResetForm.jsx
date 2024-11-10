@@ -1,6 +1,7 @@
 import { React, useState, useEffect } from "react";
 import { FaEnvelope } from "react-icons/fa";
 import axios from "axios";
+import config from "../../config";
 import { useLocation } from "react-router-dom";
 import { Alert, AlertIcon, AlertTitle, CloseButton } from '@chakra-ui/react';
 import {
@@ -51,7 +52,7 @@ function PasswordResetForm() {
       console.log(token);
       console.log(newPassword)
         const response = await axios.post(
-        `${config.baseURL}/public/public/password-reset`, {
+        `${config.baseURL}/public/public/password-reset/`, {
             verification_key: token,
             new_password: newPassword
         }
