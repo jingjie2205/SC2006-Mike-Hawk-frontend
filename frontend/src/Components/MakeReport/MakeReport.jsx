@@ -34,6 +34,17 @@ function MakeReport() {
   }, [location]); // Runs whenever location state changes
 
   const handleSubmit = async (e) => {
+    if (!imageFile) {
+      toast({
+        title: "Image Missing",
+        description: "Please upload an image for your report.",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+    
     // Ensure location is set before submitting
     if (!location) {
       toast({
