@@ -75,8 +75,8 @@ function MakeReport() {
     formData.append("user_id", localStorage.getItem("userId"));
     formData.append("description", description);
     formData.append("title", title);
-    formData.append("longitude", parseFloat(location[0].toString())); // Ensure it's a number
-    formData.append("latitude", parseFloat(location[1].toString())); // Ensure it's a number
+    formData.append("longitude", parseFloat(location[1].toString())); // Ensure it's a number
+    formData.append("latitude", parseFloat(location[0].toString())); // Ensure it's a number
     formData.append("incident_time", epochTime);
     
     if (imageFile) {
