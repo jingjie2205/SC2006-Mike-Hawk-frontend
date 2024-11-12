@@ -65,16 +65,10 @@ function UserMyReport() {
   const sortedReports = useMemo(() => {
     const sortReports = [...filteredReports];
     if (sortOption === "Most recent") {
-      return sortReports.sort((a, b) => new Date(b.Date) - new Date(a.Date));
+      return sortReports.sort((a, b) => b.datetime - a.datetime);
     }
     if (sortOption === "Oldest") {
-      return sortReports.sort((a, b) => new Date(a.Date) - new Date(b.Date));
-    }
-    if (sortOption === "Most Severe") {
-      return sortReports.sort((a, b) => b.severity - a.severity);
-    }
-    if (sortOption === "Least Severe") {
-      return sortReports.sort((a, b) => a.severity - b.severity);
+      return sortReports.sort((a, b) => a.datetime - b.datetime);
     }
     return sortReports;
   }, [filteredReports, sortOption]);
@@ -143,13 +137,13 @@ function UserMyReport() {
         align="center"
         color="black"
       >
-        Active Reports
+        In Progress
       </Text>
 
       <VStack bg="white" align="center">
         {sortedReports.filter(
           (report) =>
-            report.status === "In Progress" || report.status === "Pending"
+            report.status === "In Progress"
         ).length === 0 ? (
           <Box bg="#dddddd" w="80%" margin="3% 0" padding="3%">
             <Text fontWeight={"400"} fontSize={"120%"}>
@@ -160,7 +154,43 @@ function UserMyReport() {
           sortedReports
             .filter(
               (report) =>
-                report.status === "In Progress" || report.status === "Pending"
+                report.status === "In Progress" 
+            )
+            .map((report) => (
+              <ReportItem
+                key={report.report_id}
+                report={report}
+                onClick={() => openReportDetails(report)}
+              />
+            ))
+        )}
+      </VStack>
+
+      <Text
+        fontWeight="500"
+        mb="2%"
+        fontSize="250%"
+        align="center"
+        color="black"
+      >
+        Pending
+      </Text>
+
+      <VStack bg="white" align="center">
+        {sortedReports.filter(
+          (report) =>
+            report.status === "Pending"
+        ).length === 0 ? (
+          <Box bg="#dddddd" w="80%" margin="3% 0" padding="3%">
+            <Text fontWeight={"400"} fontSize={"120%"}>
+              No reports found
+            </Text>
+          </Box>
+        ) : (
+          sortedReports
+            .filter(
+              (report) =>
+                report.status === "Pending"
             )
             .map((report) => (
               <ReportItem
@@ -180,7 +210,7 @@ function UserMyReport() {
         align="center"
         color="black"
       >
-        Past Reports
+        Resolved
       </Text>
 
       <VStack bg="white" align="center" mb="60px">

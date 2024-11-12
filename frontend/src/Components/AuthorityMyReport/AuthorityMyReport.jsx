@@ -30,6 +30,7 @@ function AuthorityMyReport() {
                     `${config.baseURL}/reports/reports/get_reports_by_authority_id/${userId}`
                 );
                 if (response.status === 200) {
+                    console.log(response.data);
                     setReports(response.data);
                     setFilteredReports(response.data);
                 }
@@ -75,12 +76,6 @@ function AuthorityMyReport() {
             return sortReports.sort(
                 (a, b) => new Date(a.Date) - new Date(b.Date)
             );
-        }
-        if (sortOption === "Most Severe") {
-            return sortReports.sort((a, b) => b.severity - a.severity);
-        }
-        if (sortOption === "Least Severe") {
-            return sortReports.sort((a, b) => a.severity - b.severity);
         }
         return sortReports;
     }, [filteredReports, sortOption]);
@@ -164,13 +159,12 @@ function AuthorityMyReport() {
                 align="center"
                 color="black"
             >
-                Active Reports
+                Pending Reports
             </Text>
 
             <VStack bg="white" align="center">
                 {sortedReports.filter(
                     (report) =>
-                        report.status === "In Progress" ||
                         report.status === "Pending"
                 ).length === 0 ? (
                     <Box bg="#dddddd" w="80%" margin="3% 0" padding="3%">
@@ -182,7 +176,6 @@ function AuthorityMyReport() {
                     sortedReports
                         .filter(
                             (report) =>
-                                report.status === "In Progress" ||
                                 report.status === "Pending"
                         )
                         .map((report) => (
@@ -203,7 +196,7 @@ function AuthorityMyReport() {
                 align="center"
                 color="black"
             >
-                Past Reports
+                Resolved Reports
             </Text>
 
             <VStack bg="white" align="center">

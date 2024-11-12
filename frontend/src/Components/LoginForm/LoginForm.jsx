@@ -91,6 +91,8 @@ function LoginForm() {
       if (response.status === 200) {
         localStorage.setItem("authToken", response.data.token);
         localStorage.setItem("userId", response.data.user_id);
+        console.log(name);
+        localStorage.setItem("userName", name);
         localStorage.setItem("isAuthority", response.data.isAuthority);
         localStorage.setItem("isModerator", response.data.isModerator);
 

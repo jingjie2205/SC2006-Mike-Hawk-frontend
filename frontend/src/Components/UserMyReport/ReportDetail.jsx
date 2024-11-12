@@ -133,6 +133,11 @@ function ReportDetail() {
                     headers: { "Content-Type": "multipart/form-data" },
                 }
             );
+            
+            // Update report status to resolved
+            await axios.put(
+                `${config.baseURL}/reports/reports/${reportID}/status?status=${"Resolved"}`
+            );
 
             toast({
                 title: "Post created",
@@ -298,6 +303,21 @@ function ReportDetail() {
                             </ModalFooter>
                         </ModalContent>
                     </Modal>
+
+                    {/* Conditionally render "Make a Post" button for authorities */}
+                    {!isUserAuthority && report.status === "Resolved" && (
+                        <Box w="100%">
+                            <Box bg="#E2E8F0" p={3} borderRadius="md">
+                                <Text fontWeight="bold">
+                                    Points:
+                                </Text>
+                                <Text fontSize="lg" fontWeight="medium">
+                                    {report.points}
+                                </Text>
+                            </Box>
+                        </Box>
+                    )}
+
                 </VStack>
             </Box>
             <Box

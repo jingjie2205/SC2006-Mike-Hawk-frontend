@@ -21,6 +21,7 @@ function UserDashboard() {
   const [debouncedTerm, setDebouncedTerm] = useState(searchTerm); // Debounced search term
   const [filteredPosts, setFilteredPosts] = useState([]); // State for filtered posts
   const [postsData, setPostsData] = useState([]); // State for all fetched posts
+  const userName = localStorage.getItem("userName");
 
   // Effect to update the debounced search term with a delay
   useEffect(() => {
@@ -68,7 +69,7 @@ function UserDashboard() {
           color="white"
           mb="0px"
         >
-          Welcome John
+          Welcome {userName}
         </Text>
         <HStack alignItems="center" mt="0px">
           <InputGroup startElement={<FaSearch />}>

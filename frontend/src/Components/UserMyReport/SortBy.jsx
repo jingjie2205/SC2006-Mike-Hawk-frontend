@@ -9,9 +9,6 @@ const SortBy = ({ sortOption, onSortChange }) => {
       <Select value={sortOption} onChange={onSortChange}>
         <option value="Newest">Newest</option>
         <option value="Oldest">Oldest</option>
-        <option value="Most Severe">Most Severe</option>
-        <option value="Least Severe">Least Severe</option>
-        <option value="Category">Category</option>
       </Select>
     </VStack>
   );
