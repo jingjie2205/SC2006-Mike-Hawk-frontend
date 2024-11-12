@@ -57,6 +57,15 @@ function MyRewardsPage() {
     fetchMyRewards();
   }, []);
 
+  // Filter rewards based on expiry date
+  const currentDate = new Date();
+  const activeRewards = myRewards.filter(
+    (reward) => new Date(reward.expiry * 1000) > currentDate
+  );
+  const expiredRewards = myRewards.filter(
+    (reward) => new Date(reward.expiry * 1000) <= currentDate
+  );
+
   return (
     <div align="center">
       <VStack bg="#06ADBF" align="center" mt="3%" mb="3%">
@@ -89,17 +98,37 @@ function MyRewardsPage() {
             <StatNumber>{userPoints}</StatNumber>
           </Stat>
         </Box>
-        {myRewards.length > 0 ? (
-          myRewards.map((reward) => (
+
+        {/* Active Rewards */}
+        <Text fontSize="xl" fontWeight="bold" mt="4">Active Rewards</Text>
+        {activeRewards.length > 0 ? (
+          activeRewards.map((reward) => (
             <MyRewardsCard
+              key={reward.reward_id}
               rewardID={reward.reward_id}
               expiry={reward.expiry}
               giftcode={reward.giftcode}
             />
           ))
         ) : (
-          <Text>You don't have any rewards yet.</Text>
+          <Text>No active rewards at the moment.</Text>
         )}
+
+        {/* Expired Rewards */}
+        <Text fontSize="xl" fontWeight="bold" mt="8">Expired Rewards</Text>
+        {expiredRewards.length > 0 ? (
+          expiredRewards.map((reward) => (
+            <MyRewardsCard
+              key={reward.reward_id}
+              rewardID={reward.reward_id}
+              expiry={reward.expiry}
+              giftcode={reward.giftcode}
+            />
+          ))
+        ) : (
+          <Text>No expired rewards.</Text>
+        )}
+
         <Button
           as={Link}
           to="/rewards"

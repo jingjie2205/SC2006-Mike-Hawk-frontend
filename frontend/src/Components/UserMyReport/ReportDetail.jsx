@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import config from "../../config";
+import { Link as RouterLink } from "react-router-dom";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
     Box,
@@ -19,9 +20,12 @@ import {
     useDisclosure,
     useToast,
     Textarea,
+    Tooltip,
+    Link
 } from "@chakra-ui/react";
 import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
 import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
+import { IoIosArrowBack } from "react-icons/io";
 import NavBar from "../../Common/NavBar";
 import ImageUpload from "../MakeReport/ImageUpload";
 
@@ -164,6 +168,23 @@ function ReportDetail() {
 
     return (
         <Box minHeight="100vh">
+            {/* Sticky Back Button */}
+            <Box
+                position="sticky"
+                top="0"
+                bg="#06ADBF"
+                p="4"
+                zIndex="1000"
+                borderBottom="1px solid #E2E8F0"
+                boxShadow="md"
+            >
+                <Tooltip label="My Reports">
+                    <Link as={RouterLink} to="/myreports">
+                        <IoIosArrowBack size={30} color="white" />
+                    </Link>
+                </Tooltip>
+            </Box>
+            
             <Box p={6} mb="60px">
                 <VStack align="start" spacing={5}>
                     <Box w="100%" bg="#E2E8F0" p={4} borderRadius="md">
