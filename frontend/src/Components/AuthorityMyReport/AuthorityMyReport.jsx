@@ -68,15 +68,11 @@ function AuthorityMyReport() {
     const sortedReports = useMemo(() => {
         const sortReports = [...filteredReports];
         if (sortOption === "Most recent") {
-            return sortReports.sort(
-                (a, b) => new Date(b.Date) - new Date(a.Date)
-            );
-        }
-        if (sortOption === "Oldest") {
-            return sortReports.sort(
-                (a, b) => new Date(a.Date) - new Date(b.Date)
-            );
-        }
+            return sortReports.sort((a, b) => b.datetime - a.datetime);
+          }
+          if (sortOption === "Oldest") {
+            return sortReports.sort((a, b) => a.datetime - b.datetime);
+          }
         return sortReports;
     }, [filteredReports, sortOption]);
 
@@ -151,6 +147,42 @@ function AuthorityMyReport() {
                     Show all reports
                 </Text>
             </HStack>
+
+            <Text
+                fontWeight="500"
+                mb="2%"
+                fontSize="250%"
+                align="center"
+                color="black"
+            >
+                In Progress Reports
+            </Text>
+
+            <VStack bg="white" align="center">
+                {sortedReports.filter(
+                    (report) =>
+                        report.status === "In Progress"
+                ).length === 0 ? (
+                    <Box bg="#dddddd" w="80%" margin="3% 0" padding="3%">
+                        <Text fontWeight={"400"} fontSize={"120%"}>
+                            No reports found
+                        </Text>
+                    </Box>
+                ) : (
+                    sortedReports
+                        .filter(
+                            (report) =>
+                                report.status === "In Progress"
+                        )
+                        .map((report) => (
+                            <ReportItem
+                                key={report.report_id}
+                                report={report}
+                                onClick={() => openReportDetails(report)}
+                            />
+                        ))
+                )}
+            </VStack>
 
             <Text
                 fontWeight="500"

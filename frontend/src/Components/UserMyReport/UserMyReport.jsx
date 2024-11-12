@@ -137,7 +137,7 @@ function UserMyReport() {
         align="center"
         color="black"
       >
-        In Progress
+        In Progress Reports
       </Text>
 
       <VStack bg="white" align="center">
@@ -173,7 +173,7 @@ function UserMyReport() {
         align="center"
         color="black"
       >
-        Pending
+        Pending Reports
       </Text>
 
       <VStack bg="white" align="center">
@@ -210,7 +210,7 @@ function UserMyReport() {
         align="center"
         color="black"
       >
-        Resolved
+        Resolved Reports
       </Text>
 
       <VStack bg="white" align="center" mb="60px">
