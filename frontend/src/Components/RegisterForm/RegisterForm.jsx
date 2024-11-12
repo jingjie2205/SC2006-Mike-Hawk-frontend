@@ -12,8 +12,8 @@ import {
     Button,
     Image,
     Link,
-    border,
     Spinner,
+    useToast, 
 } from "@chakra-ui/react";
 import config from "../../config";
 
@@ -33,6 +33,7 @@ const RegisterForm = () => {
     const [loading, setLoading] = useState(false); // New loading state
 
     const navigate = useNavigate();
+    const toast = useToast(); 
 
     const handleName = (e) => {
         setName(e.target.value);
@@ -106,8 +107,13 @@ const RegisterForm = () => {
             );
             if (response.status === 200) {
                 setSubmitted(true);
-                //Redirect user to login page
-                navigate("/login");
+                toast({
+                    title: "Verification Email Sent",
+                    description: "Please verify your email to complete registration.",
+                    status: "success",
+                    duration: 5000,
+                    isClosable: true,
+                });
             }
         } catch (err) {
             if (err.response && err.response.status === 400) {
