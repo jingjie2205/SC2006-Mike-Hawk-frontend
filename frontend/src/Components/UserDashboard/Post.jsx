@@ -130,7 +130,7 @@ function Post({ post }) {
                     {post.title}
                 </Text>
                 <Text
-                    mt={10}
+                    mt={5}
                     fontWeight="500"
                     fontSize="100%"
                     color="black"
