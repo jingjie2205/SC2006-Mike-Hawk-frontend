@@ -247,7 +247,7 @@ function ReportDetail() {
           </Box>
 
           {/* Conditionally render "Make a Post" button for authorities */}
-          { report.status === "In Progress" || report.status === "Resolved" && (
+          { ((report.status === "In Progress" || report.status === "Resolved")) && (
             <Box w="100%">
               <Box bg="#E2E8F0" p={3} borderRadius="md">
                 <Text fontWeight="bold">Ollama Description:</Text>
@@ -273,14 +273,15 @@ function ReportDetail() {
                   {report.points}
                 </Text>
               </Box>
-              <Button
+              {isUserAuthority?  (<Box><Button
                 colorScheme="blue"
                 onClick={onOpen}
                 width="100%"
                 align="center"
               >
                 Make a Post
-              </Button>
+              </Button></Box>) : <Box/>
+              }
             </Box>
           )}
 
