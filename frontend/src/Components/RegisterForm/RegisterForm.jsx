@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
-import "../LoginForm/LoginForm.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
 import {
     Box,
     FormControl,
@@ -13,58 +11,43 @@ import {
     Image,
     Link,
     Spinner,
-    useToast, 
+    useToast,
+    Progress,
+    Text,
+    List,
+    ListItem,
+    ListIcon,
 } from "@chakra-ui/react";
+import { FaRegCheckSquare, FaRegSquare } from "react-icons/fa";
 import config from "../../config";
 
 const RegisterForm = () => {
-    // useStates for username, password, confirmPassword, email
-    const [name, setName] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [email, setEmail] = useState("");
-
-    // States
+    const [formData, setFormData] = useState({
+        name: "",
+        password: "",
+        confirmPassword: "",
+        email: "",
+    });
     const [submitted, setSubmitted] = useState(false);
-    const [emptyError, setEmptyError] = useState(false);
-    const [passwordError, setPasswordError] = useState(false);
-    const [duplicateEntryError, setDuplicateEntryError] = useState(false);
-    const [invalidEmail, setInvalidEmailError] = useState(false);
-    const [loading, setLoading] = useState(false); // New loading state
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [passwordStrength, setPasswordStrength] = useState(0);
+    const [passwordCriteria, setPasswordCriteria] = useState({
+        minLength: false,
+        hasUpperCase: false,
+        hasLowerCase: false,
+        hasNumber: false,
+        hasSpecialChar: false,
+    });
 
     const navigate = useNavigate();
-    const toast = useToast(); 
+    const toast = useToast();
 
-    const handleName = (e) => {
-        setName(e.target.value);
+    const handleChange = (e) => {
+        const { id, value } = e.target;
+        setFormData((prev) => ({ ...prev, [id]: value }));
         setSubmitted(false);
-        setEmptyError(false);
-        setPasswordError(false);
-        setDuplicateEntryError(false);
-    };
-
-    const handlePassword = (e) => {
-        setPassword(e.target.value);
-        setSubmitted(false);
-        setEmptyError(false);
-        setPasswordError(false);
-        setDuplicateEntryError(false);
-    };
-
-    const handleConfirmPassword = (e) => {
-        setConfirmPassword(e.target.value);
-        setSubmitted(false);
-        setEmptyError(false);
-        setPasswordError(false);
-        setDuplicateEntryError(false);
-    };
-
-    const handleEmail = (e) => {
-        setEmail(e.target.value);
-        setSubmitted(false);
-        setEmptyError(false);
-        setPasswordError(false);
-        setDuplicateEntryError(false);
+        setError("");
     };
 
     const validateEmail = (email) => {
@@ -72,39 +55,55 @@ const RegisterForm = () => {
         return emailPattern.test(email);
     };
 
+    const evaluatePasswordStrength = (password) => {
+        const criteria = {
+            minLength: password.length >= 8,
+            hasUpperCase: /[A-Z]/.test(password),
+            hasLowerCase: /[a-z]/.test(password),
+            hasNumber: /\d/.test(password),
+            hasSpecialChar: /[^A-Za-z0-9]/.test(password),
+        };
+
+        setPasswordCriteria(criteria);
+
+        const strength = Object.values(criteria).filter(Boolean).length;
+        const strengthPercent = (strength / Object.keys(criteria).length) * 100;
+        setPasswordStrength(strengthPercent);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true); // Start loading
-        if (
-            name === "" ||
-            password === "" ||
-            confirmPassword === "" ||
-            email === ""
-        ) {
-            setEmptyError(true);
+        setLoading(true);
+        const { name, password, confirmPassword, email } = formData;
+
+        if (!name || !password || !confirmPassword || !email) {
+            setError("Please fill all fields.");
+            setLoading(false);
             return;
         }
-
         if (password !== confirmPassword) {
-            setPasswordError(true);
+            setError("Passwords do not match.");
+            setLoading(false);
             return;
         }
-
         if (!validateEmail(email)) {
-            // Set an error state for invalid email
-            setInvalidEmailError(true);
+            setError("Invalid email format.");
+            setLoading(false);
+            return;
+        }
+        if (passwordStrength < 80) {
+            setError("Password strength must be at least 80%.");
+            setLoading(false);
             return;
         }
 
         try {
-            const response = await axios.post(
-                `${config.baseURL}/public/public/register`,
-                {
-                    userName: name,
-                    password: password,
-                    emailAddress: email,
-                }
-            );
+            const response = await axios.post(`${config.baseURL}/public/public/register`, {
+                userName: name,
+                password,
+                emailAddress: email,
+            });
+
             if (response.status === 200) {
                 setSubmitted(true);
                 toast({
@@ -117,26 +116,17 @@ const RegisterForm = () => {
             }
         } catch (err) {
             if (err.response && err.response.status === 400) {
-                setDuplicateEntryError(true);
+                setError("Username/Email already in use.");
             }
         } finally {
-            setLoading(false); // Stop loading
+            setLoading(false);
         }
     };
 
-    const MessageBox = ({ children, type }) => (
-        <Box
-            className={`${type}Message`}
-            border={`3px solid ${type === "success" ? "green" : "red"}`}
-        >
-            <p>{children}</p>
-        </Box>
-    );
-
     return (
         <Box
-            bgGradient="linear(to-r, teal.500, green.500)" // Set your background here
-            minHeight="100vh" // Ensures it covers the full height of the viewport
+            bgGradient="linear(to-r, teal.500, green.500)"
+            minHeight="100vh"
             display="flex"
             justifyContent="center"
             alignItems="center"
@@ -146,11 +136,8 @@ const RegisterForm = () => {
                 w={["full", "md"]}
                 p={[8, 10]}
                 mx="auto"
-                border={["none", "1px solid #e8e8e8"]}
-                borderColor={["", "gray.200"]}
                 borderRadius={10}
                 boxShadow="md"
-                rounded="md"
                 bg="white"
             >
                 <Image
@@ -160,103 +147,113 @@ const RegisterForm = () => {
                     rounded={10}
                     paddingBottom={3}
                 />
+                
                 <div className="messages">
-                    {emptyError && (
-                        <MessageBox type="error">
-                            Please fill all fields
-                        </MessageBox>
-                    )}
-                    {passwordError && (
-                        <MessageBox type="error">
-                            Passwords do not match
-                        </MessageBox>
-                    )}
-                    {duplicateEntryError && (
-                        <MessageBox type="error">
-                            Username/Email used
-                        </MessageBox>
-                    )}
-                    {invalidEmail && (
-                        <MessageBox type="error">
-                            Invalid email format: xxx@example.com
-                        </MessageBox>
+                    {error && (
+                        <Box border="3px solid red" padding={2} borderRadius={5} mb={4}>
+                            <Text color="red.500">{error}</Text>
+                        </Box>
                     )}
                     {submitted && (
-                        <MessageBox type="success">
-                            Successfully Registered
-                        </MessageBox>
+                        <Box border="3px solid green" padding={2} borderRadius={5} mb={4}>
+                            <Text color="green.500">Successfully Registered</Text>
+                        </Box>
                     )}
                 </div>
 
                 <FormControl>
-                    <FormLabel htmlFor="Username">Username</FormLabel>
-                    <div className="wrapper">
-                        <Input
-                            id="username"
-                            type="username"
-                            rounded={20}
-                            onChange={handleName}
-                            value={name}
-                            required
-                        />
-                    </div>
-                    <FormLabel htmlFor="Password">Password</FormLabel>
-                    <div class="wrapper">
-                        <Input
-                            id="password"
-                            type="password"
-                            rounded={20}
-                            onChange={handlePassword}
-                            value={password}
-                            required
-                        />
-                    </div>
-                    <FormLabel htmlFor="Password">Confirm Password</FormLabel>
-                    <div class="wrapper">
-                        <Input
-                            id="cmfPassword"
-                            type="password"
-                            rounded={20}
-                            onChange={handleConfirmPassword}
-                            value={confirmPassword}
-                            required
-                        />
-                    </div>
-                    <FormLabel htmlFor="Password">Email</FormLabel>
-                    <div class="wrapper">
-                        <Input
-                            id="email"
-                            type="email"
-                            rounded={20}
-                            onChange={handleEmail}
-                            value={email}
-                            required
-                        />
-                    </div>
+                    <FormLabel htmlFor="name">Username</FormLabel>
+                    <Input
+                        id="name"
+                        type="text"
+                        rounded={20}
+                        onChange={handleChange}
+                        value={formData.name}
+                        required
+                    />
+                    
+                    <FormLabel htmlFor="password">Password</FormLabel>
+                    <Input
+                        id="password"
+                        type="password"
+                        rounded={20}
+                        onChange={(e) => {
+                            handleChange(e);
+                            evaluatePasswordStrength(e.target.value);
+                        }}
+                        value={formData.password}
+                        required
+                    />
+                    <Progress
+                        mt={2}
+                        value={passwordStrength}
+                        colorScheme={
+                            passwordStrength < 40 ? "red" : passwordStrength < 80 ? "yellow" : "green"
+                        }
+                    />
+
+                    <Box mt={4}>
+                        <Text fontWeight="bold">Password must contain:</Text>
+                        <List spacing={1} mt={2}>
+                            <ListItem>
+                                <ListIcon as={passwordCriteria.minLength ? FaRegCheckSquare : FaRegSquare} color={passwordCriteria.minLength ? "green.500" : "red.500"} />
+                                Minimum 8 characters
+                            </ListItem>
+                            <ListItem>
+                                <ListIcon as={passwordCriteria.hasUpperCase ? FaRegCheckSquare : FaRegSquare} color={passwordCriteria.hasUpperCase ? "green.500" : "red.500"} />
+                                At least one uppercase letter
+                            </ListItem>
+                            <ListItem>
+                                <ListIcon as={passwordCriteria.hasLowerCase ? FaRegCheckSquare : FaRegSquare} color={passwordCriteria.hasLowerCase ? "green.500" : "red.500"} />
+                                At least one lowercase letter
+                            </ListItem>
+                            <ListItem>
+                                <ListIcon as={passwordCriteria.hasNumber ? FaRegCheckSquare : FaRegSquare} color={passwordCriteria.hasNumber ? "green.500" : "red.500"} />
+                                At least one number
+                            </ListItem>
+                            <ListItem>
+                                <ListIcon as={passwordCriteria.hasSpecialChar ? FaRegCheckSquare : FaRegSquare} color={passwordCriteria.hasSpecialChar ? "green.500" : "red.500"} />
+                                At least one special character
+                            </ListItem>
+                        </List>
+                    </Box>
+
+                    <FormLabel htmlFor="confirmPassword" mt={4}>Confirm Password</FormLabel>
+                    <Input
+                        id="confirmPassword"
+                        type="password"
+                        rounded={20}
+                        onChange={handleChange}
+                        value={formData.confirmPassword}
+                        required
+                    />
+                    
+                    <FormLabel htmlFor="email">Email</FormLabel>
+                    <Input
+                        id="email"
+                        type="email"
+                        rounded={20}
+                        onChange={handleChange}
+                        value={formData.email}
+                        required
+                    />
+
                     <Button
                         borderRadius={20}
-                        type="signup"
                         variant="solid"
                         colorScheme="blue"
                         width="full"
+                        mt={4}
                         onClick={handleSubmit}
-                        isDisabled={loading} // Disable button when loading
+                        isDisabled={loading}
                     >
-                        {loading ? <Spinner size="sm" /> : "SIGN UP"}{" "}
-                        {/* Show Spinner when loading */}
+                        {loading ? <Spinner size="sm" /> : "SIGN UP"}
                     </Button>
-                    <div>
-                        <FormLabel htmlFor="register" textAlign={"center"}>
-                            <Link
-                                as={RouterLink}
-                                to="/login"
-                                color="blue.400"
-                                _hover={{ color: "blue.600" }}
-                            >
-                                Already have an account?
-                            </Link>
-                        </FormLabel>
-                    </div>
+                    <FormLabel textAlign={"center"} mt={2}>
+                        <Link as={RouterLink} to="/login" color="blue.400" _hover={{ color: "blue.600" }}>
+                            Already have an account?
+                        </Link>
+                    </FormLabel>
                 </FormControl>
             </Box>
         </Box>

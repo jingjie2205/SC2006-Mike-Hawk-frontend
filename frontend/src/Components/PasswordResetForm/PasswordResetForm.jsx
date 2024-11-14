@@ -1,25 +1,41 @@
-import { React, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { FaEnvelope } from "react-icons/fa";
 import axios from "axios";
 import config from "../../config";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Alert, AlertIcon, AlertTitle, CloseButton } from "@chakra-ui/react";
 import {
+    Alert,
+    AlertIcon,
+    AlertTitle,
+    CloseButton,
     Box,
     FormControl,
     FormLabel,
     Input,
     Button,
     Image,
-    Link,
+    Progress,
+    Text,
+    List,
+    ListItem,
+    ListIcon
 } from "@chakra-ui/react";
+import { FaRegCheckSquare, FaRegSquare } from "react-icons/fa";
 
 function PasswordResetForm() {
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [errorMessage, setErrorMessage] = useState(null); // State to store error message
-    const [successMessage, setSuccessMessage] = useState(null); // State to store success message
+    const [errorMessage, setErrorMessage] = useState(null);
+    const [successMessage, setSuccessMessage] = useState(null);
     const [token, setToken] = useState(null);
+    const [passwordStrength, setPasswordStrength] = useState(0);
+    const [passwordCriteria, setPasswordCriteria] = useState({
+        minLength: false,
+        hasUpperCase: false,
+        hasLowerCase: false,
+        hasNumber: false,
+        hasSpecialChar: false,
+    });
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -27,14 +43,32 @@ function PasswordResetForm() {
         const params = new URLSearchParams(location.search);
         const token = params.get("verification_key");
         if (token) {
-            setToken(token); // Store token in the state
+            setToken(token);
         } else {
             setErrorMessage("Invalid reset link.");
         }
     }, [location]);
 
+    const evaluatePasswordStrength = (password) => {
+        const criteria = {
+            minLength: password.length >= 8,
+            hasUpperCase: /[A-Z]/.test(password),
+            hasLowerCase: /[a-z]/.test(password),
+            hasNumber: /\d/.test(password),
+            hasSpecialChar: /[^A-Za-z0-9]/.test(password),
+        };
+
+        setPasswordCriteria(criteria);
+
+        const strength = Object.values(criteria).filter(Boolean).length;
+        const strengthPercent = (strength / Object.keys(criteria).length) * 100;
+        setPasswordStrength(strengthPercent);
+    };
+
     const handlePasswordChange = (e) => {
-        setNewPassword(e.target.value);
+        const password = e.target.value;
+        setNewPassword(password);
+        evaluatePasswordStrength(password);
     };
 
     const handleConfirmPasswordChange = (e) => {
@@ -50,8 +84,6 @@ function PasswordResetForm() {
         }
 
         try {
-            console.log(token);
-            console.log(newPassword);
             const response = await axios.post(
                 `${config.baseURL}/public/public/password-reset/`,
                 {
@@ -61,12 +93,11 @@ function PasswordResetForm() {
             );
             if (response.status === 200) {
                 setSuccessMessage("Password reset successfully.");
-                setErrorMessage(null); // Clear any previous error
+                setErrorMessage(null);
 
-                // Redirect to the login page after a short delay
                 setTimeout(() => {
                     navigate("/login");
-                }, 2000); // Redirect after 2 seconds
+                }, 2000);
             } else {
                 setErrorMessage("Error resetting password. Please try again.");
             }
@@ -88,11 +119,8 @@ function PasswordResetForm() {
                 w={["full", "md"]}
                 p={[8, 10]}
                 mx="auto"
-                border={["none", "1px solid #e8e8e8"]}
-                borderColor={["", "gray.200"]}
                 borderRadius={10}
                 boxShadow="md"
-                rounded="md"
                 bg="white"
             >
                 <Image
@@ -101,7 +129,6 @@ function PasswordResetForm() {
                     rounded={10}
                 />
 
-                {/* Error message box */}
                 {errorMessage && (
                     <Alert status="error" mt={2}>
                         <AlertIcon />
@@ -115,7 +142,6 @@ function PasswordResetForm() {
                     </Alert>
                 )}
 
-                {/* Success message box */}
                 {successMessage && (
                     <Alert status="success" mt={2}>
                         <AlertIcon />
@@ -130,28 +156,55 @@ function PasswordResetForm() {
                 )}
                 <FormControl>
                     <FormLabel htmlFor="newPassword">New Password</FormLabel>
-                    <div className="wrapper">
-                        <Input
-                            id="newPassword"
-                            type="password"
-                            rounded={20}
-                            onChange={handlePasswordChange}
-                        />
-                        <FaEnvelope className="icon" />
-                    </div>
+                    <Input
+                        id="newPassword"
+                        type="password"
+                        rounded={20}
+                        onChange={handlePasswordChange}
+                    />
+                    <Progress
+                        mt={2}
+                        value={passwordStrength}
+                        colorScheme={
+                            passwordStrength < 40 ? "red" : passwordStrength < 80 ? "yellow" : "green"
+                        }
+                    />
 
-                    <FormLabel htmlFor="confirmPassword">
+                    <Box mt={4}>
+                        <Text fontWeight="bold">Password must contain:</Text>
+                        <List spacing={1} mt={2}>
+                            <ListItem>
+                                <ListIcon as={passwordCriteria.minLength ? FaRegCheckSquare : FaRegSquare} color={passwordCriteria.minLength ? "green.500" : "red.500"} />
+                                Minimum 8 characters
+                            </ListItem>
+                            <ListItem>
+                                <ListIcon as={passwordCriteria.hasUpperCase ? FaRegCheckSquare : FaRegSquare} color={passwordCriteria.hasUpperCase ? "green.500" : "red.500"} />
+                                At least one uppercase letter
+                            </ListItem>
+                            <ListItem>
+                                <ListIcon as={passwordCriteria.hasLowerCase ? FaRegCheckSquare : FaRegSquare} color={passwordCriteria.hasLowerCase ? "green.500" : "red.500"} />
+                                At least one lowercase letter
+                            </ListItem>
+                            <ListItem>
+                                <ListIcon as={passwordCriteria.hasNumber ? FaRegCheckSquare : FaRegSquare} color={passwordCriteria.hasNumber ? "green.500" : "red.500"} />
+                                At least one number
+                            </ListItem>
+                            <ListItem>
+                                <ListIcon as={passwordCriteria.hasSpecialChar ? FaRegCheckSquare : FaRegSquare} color={passwordCriteria.hasSpecialChar ? "green.500" : "red.500"} />
+                                At least one special character
+                            </ListItem>
+                        </List>
+                    </Box>
+
+                    <FormLabel htmlFor="confirmPassword" mt={4}>
                         Confirm New Password
                     </FormLabel>
-                    <div className="wrapper">
-                        <Input
-                            id="confirmPassword"
-                            type="password"
-                            rounded={20}
-                            onChange={handleConfirmPasswordChange}
-                        />
-                        <FaEnvelope className="icon" />
-                    </div>
+                    <Input
+                        id="confirmPassword"
+                        type="password"
+                        rounded={20}
+                        onChange={handleConfirmPasswordChange}
+                    />
 
                     <Button
                         borderRadius={20}
@@ -159,6 +212,7 @@ function PasswordResetForm() {
                         variant="solid"
                         colorScheme="blue"
                         width="full"
+                        mt={4}
                         onClick={handleSubmit}
                     >
                         Reset Password

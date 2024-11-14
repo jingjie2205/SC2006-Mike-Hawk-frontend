@@ -209,7 +209,7 @@ function LoginForm() {
         <Image src="./public/RQ.png" alt="ReportQuest Logo" rounded={10} />
 
         {/* Error message box */}
-        {errorMessage && (
+        {errorMessage && !isVerificationSuccess && (
           <Alert status="error" mt={2}>
             <AlertIcon />
             <AlertTitle mr={2}>Error</AlertTitle>
