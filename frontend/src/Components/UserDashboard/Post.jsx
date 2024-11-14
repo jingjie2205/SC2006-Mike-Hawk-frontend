@@ -139,7 +139,13 @@ function Post({ post }) {
                     {post.description}
                 </Text>
             </Box>
-            <Image p="2%" boxSize="60%" src={image} alt="Post Image" />
+            <Image
+                p="2%"
+                boxSize="60%"
+                src={image}
+                alt="Post Image"
+                mx="auto"
+            />
         </VStack>
     );
 }
