@@ -186,13 +186,14 @@ const RegisterForm = () => {
                     />
                     <Progress
                         mt={2}
+                        width="100%"
                         value={passwordStrength}
                         colorScheme={
                             passwordStrength < 40 ? "red" : passwordStrength < 80 ? "yellow" : "green"
                         }
                     />
 
-                    <Box mt={4}>
+                    <Box mt={4} w="100%">
                         <Text fontWeight="bold">Password must contain:</Text>
                         <List spacing={1} mt={2}>
                             <ListItem>

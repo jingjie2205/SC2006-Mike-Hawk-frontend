@@ -198,7 +198,6 @@ function LoginForm() {
       <Box
         w={["full", "md"]}
         p={[8, 10]}
-        mx="auto"
         border={["none", "1px solid #e8e8e8"]}
         borderColor={["", "gray.200"]}
         borderRadius={10}

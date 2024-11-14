@@ -247,7 +247,7 @@ function ReportDetail() {
           </Box>
 
           {/* Conditionally render "Make a Post" button for authorities */}
-          {isUserAuthority && (
+          { report.status === "In Progress" || report.status === "Resolved" && (
             <Box w="100%">
               <Box bg="#E2E8F0" p={3} borderRadius="md">
                 <Text fontWeight="bold">Ollama Description:</Text>
@@ -316,17 +316,7 @@ function ReportDetail() {
             </ModalContent>
           </Modal>
 
-          {/* Conditionally render "Make a Post" button for authorities */}
-          {!isUserAuthority && report.status === "Resolved" && (
-            <Box w="100%">
-              <Box bg="#E2E8F0" p={3} borderRadius="md">
-                <Text fontWeight="bold">Points:</Text>
-                <Text fontSize="lg" fontWeight="medium">
-                  {report.points}
-                </Text>
-              </Box>
-            </Box>
-          )}
+        
         </VStack>
       </Box>
       <Box
